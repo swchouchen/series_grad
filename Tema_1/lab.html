@@ -1,0 +1,1870 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Shu Wei Chou Chen">
+
+<title>Lab: Análisis exploratorio de series temporales</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="lab_files/libs/clipboard/clipboard.min.js"></script>
+<script src="lab_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="lab_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="lab_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="lab_files/libs/quarto-html/popper.min.js"></script>
+<script src="lab_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="lab_files/libs/quarto-html/anchor.min.js"></script>
+<link href="lab_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="lab_files/libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="lab_files/libs/quarto-html/quarto-syntax-highlighting-dark-707d8167ce6003fca903bfe2be84ab7f.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="lab_files/libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="lab_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="lab_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="lab_files/libs/bootstrap/bootstrap-01c0313b923a0db7fd54a56613e97b0e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="lab_files/libs/bootstrap/bootstrap-dark-a2637c01d8867122fa2a56a349ec7965.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="lab_files/libs/bootstrap/bootstrap-01c0313b923a0db7fd54a56613e97b0e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="lab_files/libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
+
+<script src="lab_files/libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+
+<script src="lab_files/libs/plotly-binding-4.11.0/plotly.js"></script>
+
+<script src="lab_files/libs/typedarray-0.1/typedarray.min.js"></script>
+
+<script src="lab_files/libs/jquery-3.5.1/jquery.min.js"></script>
+
+<link href="lab_files/libs/crosstalk-1.2.2/css/crosstalk.min.css" rel="stylesheet">
+
+<script src="lab_files/libs/crosstalk-1.2.2/js/crosstalk.min.js"></script>
+
+<link href="lab_files/libs/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet">
+
+<script src="lab_files/libs/plotly-main-2.11.1/plotly-latest.min.js"></script>
+
+
+
+</head>
+
+<body class="quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
+<div id="quarto-sidebar-toc-left" class="sidebar toc-left">
+  <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="1">
+    <h2 id="toc-title">Contenido</h2>
+   
+  <ul>
+  <li><a href="#librerías" id="toc-librerías" class="nav-link active" data-scroll-target="#librerías"><span class="header-section-number">1</span> Librerías</a></li>
+  <li><a href="#ejemplo-pasajeros-de-avión" id="toc-ejemplo-pasajeros-de-avión" class="nav-link" data-scroll-target="#ejemplo-pasajeros-de-avión"><span class="header-section-number">2</span> <strong>Ejemplo:</strong> Pasajeros de avión</a>
+  <ul class="collapse">
+  <li><a href="#gráficos-de-los-valores-de-la-serie-contra-el-tiempo." id="toc-gráficos-de-los-valores-de-la-serie-contra-el-tiempo." class="nav-link" data-scroll-target="#gráficos-de-los-valores-de-la-serie-contra-el-tiempo."><span class="header-section-number">2.1</span> Gráficos de los valores de la serie contra el tiempo.</a></li>
+  <li><a href="#otras-opciones-más-personalizadas" id="toc-otras-opciones-más-personalizadas" class="nav-link" data-scroll-target="#otras-opciones-más-personalizadas"><span class="header-section-number">2.2</span> Otras opciones más personalizadas</a></li>
+  <li><a href="#descomposición-de-series" id="toc-descomposición-de-series" class="nav-link" data-scroll-target="#descomposición-de-series"><span class="header-section-number">2.3</span> Descomposición de series</a></li>
+  <li><a href="#otros-gráficos-útiles-para-estudiar-el-efecto-estacional" id="toc-otros-gráficos-útiles-para-estudiar-el-efecto-estacional" class="nav-link" data-scroll-target="#otros-gráficos-útiles-para-estudiar-el-efecto-estacional"><span class="header-section-number">2.4</span> Otros gráficos útiles para estudiar el efecto estacional</a></li>
+  </ul></li>
+  <li><a href="#ejemplo-producción-de-cemento" id="toc-ejemplo-producción-de-cemento" class="nav-link" data-scroll-target="#ejemplo-producción-de-cemento"><span class="header-section-number">3</span> <strong>Ejemplo:</strong> Producción de cemento</a></li>
+  <li><a href="#ejemplo-gasto-de-medicamento-anti-diabético-mensual" id="toc-ejemplo-gasto-de-medicamento-anti-diabético-mensual" class="nav-link" data-scroll-target="#ejemplo-gasto-de-medicamento-anti-diabético-mensual"><span class="header-section-number">4</span> <strong>Ejemplo:</strong> gasto de medicamento anti-diabético (mensual)</a></li>
+  <li><a href="#ejemplo-producción-de-cerveza-en-australia" id="toc-ejemplo-producción-de-cerveza-en-australia" class="nav-link" data-scroll-target="#ejemplo-producción-de-cerveza-en-australia"><span class="header-section-number">5</span> <strong>Ejemplo:</strong> Producción de cerveza en Australia</a>
+  <ul class="collapse">
+  <li><a href="#gráficos-de-rezagos" id="toc-gráficos-de-rezagos" class="nav-link" data-scroll-target="#gráficos-de-rezagos"><span class="header-section-number">5.1</span> Gráficos de rezagos</a></li>
+  <li><a href="#funcion-de-autocorrelacion" id="toc-funcion-de-autocorrelacion" class="nav-link" data-scroll-target="#funcion-de-autocorrelacion"><span class="header-section-number">5.2</span> Funcion de autocorrelacion</a></li>
+  </ul></li>
+  <li><a href="#ejemplo-muertes-por-accidente-en-eu-1973-1978" id="toc-ejemplo-muertes-por-accidente-en-eu-1973-1978" class="nav-link" data-scroll-target="#ejemplo-muertes-por-accidente-en-eu-1973-1978"><span class="header-section-number">6</span> <strong>Ejemplo:</strong> Muertes por accidente en EU 1973-1978</a></li>
+  <li><a href="#ejemplo-series-multivariadas" id="toc-ejemplo-series-multivariadas" class="nav-link" data-scroll-target="#ejemplo-series-multivariadas"><span class="header-section-number">7</span> <strong>Ejemplo:</strong> Series multivariadas</a></li>
+  <li><a href="#ejemplo-promedio-diario-industrial-dow-jone" id="toc-ejemplo-promedio-diario-industrial-dow-jone" class="nav-link" data-scroll-target="#ejemplo-promedio-diario-industrial-dow-jone"><span class="header-section-number">8</span> <strong>Ejemplo:</strong> Promedio diario industrial Dow Jone</a></li>
+  <li><a href="#paquetes-en-r-y-extensiones" id="toc-paquetes-en-r-y-extensiones" class="nav-link" data-scroll-target="#paquetes-en-r-y-extensiones"><span class="header-section-number">9</span> Paquetes en R y extensiones</a></li>
+  </ul>
+</nav>
+</div>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+</div>
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Lab: Análisis exploratorio de series temporales</h1>
+<p class="subtitle lead"><a href="https://swchouchen.github.io/series">Curso: Análisis de series temporales</a></p>
+</div>
+
+
+<div class="quarto-title-meta-author">
+  <div class="quarto-title-meta-heading">Autor/a</div>
+  <div class="quarto-title-meta-heading">Afiliación</div>
+  
+    <div class="quarto-title-meta-contents">
+    <p class="author"><a href="https://swchouchen.github.io">Shu Wei Chou Chen</a> <a href="mailto:shuwei.chou@ucr.ac.cr" class="quarto-title-author-email"><i class="bi bi-envelope"></i></a> <a href="https://orcid.org/0000-0001-5495-2486" class="quarto-title-author-orcid"> <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg=="></a></p>
+  </div>
+  <div class="quarto-title-meta-contents">
+        <p class="affiliation">
+            <a href="https://www.estadistica.ucr.ac.cr/">
+            Escuela de Estadística, Universidad de Costa Rica
+            </a>
+          </p>
+      </div>
+  </div>
+
+<div class="quarto-title-meta">
+
+      
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="librerías" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Librerías</h1>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggfortify)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(forecast)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fpp2)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(TTR)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(xts)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DT)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(quantmod)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plotly)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="ejemplo-pasajeros-de-avión" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> <strong>Ejemplo:</strong> Pasajeros de avión</h1>
+<p>Totales mensuales de pasajeros de aerolíneas internacionales, de 1949 a 1960.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"AirPassengers"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>AirPassengers</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
+1949 112 118 132 129 121 135 148 148 136 119 104 118
+1950 115 126 141 135 125 149 170 170 158 133 114 140
+1951 145 150 178 163 172 178 199 199 184 162 146 166
+1952 171 180 193 181 183 218 230 242 209 191 172 194
+1953 196 196 236 235 229 243 264 272 237 211 180 201
+1954 204 188 235 227 234 264 302 293 259 229 203 229
+1955 242 233 267 269 270 315 364 347 312 274 237 278
+1956 284 277 317 313 318 374 413 405 355 306 271 306
+1957 315 301 356 348 355 422 465 467 404 347 305 336
+1958 340 318 362 348 363 435 491 505 404 359 310 337
+1959 360 342 406 396 420 472 548 559 463 407 362 405
+1960 417 391 419 461 472 535 622 606 508 461 390 432</code></pre>
+</div>
+</div>
+<p>Este objeto ya está definido con la clase <code>ts</code>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(AirPassengers)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "ts"</code></pre>
+</div>
+</div>
+<p>Vamos a convertirlo como un vector numérico.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>AP <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(AirPassengers)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(AP)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "numeric"</code></pre>
+</div>
+</div>
+<p>Una serie temporal es, simplemente, un vector de observaciones indexado en el tiempo.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>AP.data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">tiempo=</span><span class="fu">seq_along</span>(AP),<span class="at">pasajero=</span>AP)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(AP.data)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  tiempo pasajero
+1      1      112
+2      2      118
+3      3      132
+4      4      129
+5      5      121
+6      6      135</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tail</span>(AP.data)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    tiempo pasajero
+139    139      622
+140    140      606
+141    141      508
+142    142      461
+143    143      390
+144    144      432</code></pre>
+</div>
+</div>
+<section id="gráficos-de-los-valores-de-la-serie-contra-el-tiempo." class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="gráficos-de-los-valores-de-la-serie-contra-el-tiempo."><span class="header-section-number">2.1</span> Gráficos de los valores de la serie contra el tiempo.</h2>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Herramientas de <code>base</code>.</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Con las herramientas de <code>ggplot</code>.</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">Herramientas de los objetos <code>ts</code>.</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false" href="">Con la función <code>ts.plot()</code>.</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<ul>
+<li>Un gráfico de dispersión no es apropiado, pues no permite ilustar la secuencia natural de los datos.</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(AP.data<span class="sc">$</span>tiempo,AP.data<span class="sc">$</span>pasajero)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>Una forma es usar el argumento <code>type="l"</code>, o <code>type="b"</code>.</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(AP.data<span class="sc">$</span>tiempo,AP.data<span class="sc">$</span>pasajero,<span class="at">type=</span><span class="st">"l"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(AP.data, <span class="fu">aes</span>(<span class="at">x=</span>tiempo,<span class="at">y=</span>pasajero)) <span class="sc">+</span> <span class="fu">geom_line</span>()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<ul>
+<li>Diferentes objetos en R.</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(AirPassengers)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Time-Series [1:144] from 1949 to 1961: 112 118 132 129 121 135 148 148 136 119 ...</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(AP)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> num [1:144] 112 118 132 129 121 135 148 148 136 119 ...</code></pre>
+</div>
+</div>
+<ul>
+<li>Se define como un objeto <code>ts</code>.</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>AP.ts <span class="ot">&lt;-</span> <span class="fu">ts</span>(AP, <span class="at">start =</span> <span class="fu">c</span>(<span class="dv">1949</span>, <span class="dv">1</span>), <span class="at">frequency =</span> <span class="dv">12</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(AP.ts)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Time-Series [1:144] from 1949 to 1961: 112 118 132 129 121 135 148 148 136 119 ...</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">frequency</span>(AP.ts) <span class="co">#la frecuencia de la serie</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 12</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cycle</span>(AP.ts) <span class="co">#verificar el ciclo de cada observación</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
+1949   1   2   3   4   5   6   7   8   9  10  11  12
+1950   1   2   3   4   5   6   7   8   9  10  11  12
+1951   1   2   3   4   5   6   7   8   9  10  11  12
+1952   1   2   3   4   5   6   7   8   9  10  11  12
+1953   1   2   3   4   5   6   7   8   9  10  11  12
+1954   1   2   3   4   5   6   7   8   9  10  11  12
+1955   1   2   3   4   5   6   7   8   9  10  11  12
+1956   1   2   3   4   5   6   7   8   9  10  11  12
+1957   1   2   3   4   5   6   7   8   9  10  11  12
+1958   1   2   3   4   5   6   7   8   9  10  11  12
+1959   1   2   3   4   5   6   7   8   9  10  11  12
+1960   1   2   3   4   5   6   7   8   9  10  11  12</code></pre>
+</div>
+</div>
+<ul>
+<li>La función <code>plot</code> toma en cuenta el tipo de objeto.</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(AP)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(AP.ts)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-11-2.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>Se el objeto es <code>ts</code>, la función <code>autoplot</code> lo detecta.</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>forecast<span class="sc">::</span><span class="fu">autoplot</span>(AP.ts) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">x =</span><span class="st">"tiempo"</span>, <span class="at">y =</span> <span class="st">"pasajeros (miles)"</span>, <span class="at">title=</span><span class="st">" Pasajeros (1949-1961)"</span>) </span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-1-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-4-tab">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ts.plot</span>(AP.ts) <span class="co"># Asume una serie temporal.</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ts.plot</span>(AP) <span class="co"># También asume una serie temporal aunque el objeto no es ts.</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-13-2.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="otras-opciones-más-personalizadas" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="otras-opciones-más-personalizadas"><span class="header-section-number">2.2</span> Otras opciones más personalizadas</h2>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href=""><code>ggplot</code></a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false" href=""><code>plotly</code></a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<ul>
+<li>Personalizar el gráfico usando el vector de tiempo.</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>year <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1949</span><span class="sc">:</span><span class="dv">1960</span>,<span class="at">each=</span><span class="dv">12</span>)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>month <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>, <span class="at">times=</span><span class="dv">12</span>)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>AP.data <span class="ot">&lt;-</span> AP.data <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="st">'year'</span><span class="ot">=</span>year, <span class="st">'month'</span><span class="ot">=</span>month)</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>AP.data1 <span class="ot">&lt;-</span> AP.data <span class="sc">%&gt;%</span> </span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>            <span class="fu">mutate</span>(<span class="at">date =</span> <span class="fu">make_datetime</span>(<span class="at">year =</span> year, <span class="at">month =</span> month))</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>AP.data1<span class="sc">$</span>date <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(AP.data1<span class="sc">$</span>date)</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(AP.data1)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'data.frame':   144 obs. of  5 variables:
+ $ tiempo  : int  1 2 3 4 5 6 7 8 9 10 ...
+ $ pasajero: num  112 118 132 129 121 135 148 148 136 119 ...
+ $ year    : int  1949 1949 1949 1949 1949 1949 1949 1949 1949 1949 ...
+ $ month   : int  1 2 3 4 5 6 7 8 9 10 ...
+ $ date    : Date, format: "1949-01-01" "1949-02-01" ...</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>plot1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(AP.data1, <span class="fu">aes</span>(<span class="at">x=</span>date,<span class="at">y=</span>pasajero)) <span class="sc">+</span> </span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>() </span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>plot1</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>plot1 <span class="sc">+</span> <span class="fu">scale_x_date</span>(<span class="at">date_labels =</span> <span class="st">"%m-%Y"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-14-2.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>plot1 <span class="sc">+</span> <span class="fu">scale_x_date</span>(<span class="at">date_breaks =</span> <span class="st">"1 month"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-14-3.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>plot1 <span class="sc">+</span> <span class="fu">scale_x_date</span>(<span class="at">date_breaks =</span> <span class="st">"6 month"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-14-4.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>plot1 <span class="sc">+</span> <span class="fu">scale_x_date</span>(<span class="at">date_breaks =</span> <span class="st">"1 year"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-14-5.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>plot1 <span class="sc">+</span> <span class="fu">scale_x_date</span>(<span class="at">date_breaks =</span> <span class="st">"2 year"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-14-6.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_ly</span>(<span class="at">x =</span> <span class="fu">time</span>(AirPassengers), <span class="at">y =</span> <span class="fu">as.numeric</span>(AirPassengers), <span class="at">type =</span> <span class="st">'scatter'</span>, <span class="at">mode =</span> <span class="st">'lines'</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">layout</span>(<span class="at">title =</span> <span class="st">"AirPassengers Time Series"</span>,</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">xaxis =</span> <span class="fu">list</span>(<span class="at">title =</span> <span class="st">"Time"</span>),</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">yaxis =</span> <span class="fu">list</span>(<span class="at">title =</span> <span class="st">"Passengers"</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="plotly html-widget html-fill-item" id="htmlwidget-94288032b8334f60f921" style="width:100%;height:650px;"></div>
+<script type="application/json" data-for="htmlwidget-94288032b8334f60f921">{"x":{"visdat":{"9e70486e5d5":["function () ","plotlyVisDat"]},"cur_data":"9e70486e5d5","attrs":{"9e70486e5d5":{"x":[1949,1949.0833333333333,1949.1666666666667,1949.25,1949.3333333333335,1949.4166666666667,1949.5000000000002,1949.5833333333335,1949.6666666666667,1949.7500000000002,1949.8333333333335,1949.916666666667,1950,1950.0833333333337,1950.166666666667,1950.2500000000005,1950.3333333333337,1950.416666666667,1950.5000000000005,1950.5833333333337,1950.6666666666672,1950.7500000000005,1950.8333333333339,1950.9166666666672,1951,1951.0833333333339,1951.1666666666672,1951.2500000000007,1951.3333333333339,1951.4166666666674,1951.5000000000007,1951.5833333333339,1951.6666666666674,1951.7500000000007,1951.8333333333342,1951.9166666666674,1952,1952.0833333333342,1952.1666666666674,1952.2500000000009,1952.3333333333342,1952.4166666666677,1952.5000000000009,1952.5833333333344,1952.6666666666677,1952.7500000000011,1952.8333333333344,1952.9166666666677,1953,1953.0833333333344,1953.1666666666679,1953.2500000000011,1953.3333333333346,1953.4166666666679,1953.5000000000011,1953.5833333333346,1953.6666666666679,1953.7500000000014,1953.8333333333346,1953.9166666666681,1954,1954.0833333333346,1954.1666666666681,1954.2500000000014,1954.3333333333348,1954.4166666666681,1954.5000000000016,1954.5833333333348,1954.6666666666681,1954.7500000000016,1954.8333333333348,1954.9166666666683,1955,1955.0833333333351,1955.1666666666683,1955.2500000000018,1955.3333333333351,1955.4166666666683,1955.5000000000018,1955.5833333333351,1955.6666666666686,1955.7500000000018,1955.8333333333353,1955.9166666666686,1956,1956.0833333333353,1956.1666666666686,1956.250000000002,1956.3333333333353,1956.4166666666688,1956.500000000002,1956.5833333333353,1956.6666666666688,1956.750000000002,1956.8333333333355,1956.9166666666688,1957,1957.0833333333355,1957.1666666666688,1957.2500000000023,1957.3333333333355,1957.416666666669,1957.5000000000023,1957.5833333333358,1957.666666666669,1957.7500000000025,1957.8333333333358,1957.916666666669,1958,1958.0833333333358,1958.1666666666692,1958.2500000000025,1958.333333333336,1958.4166666666692,1958.5000000000025,1958.583333333336,1958.6666666666692,1958.7500000000027,1958.833333333336,1958.9166666666695,1959,1959.083333333336,1959.1666666666695,1959.2500000000027,1959.3333333333362,1959.4166666666695,1959.500000000003,1959.5833333333362,1959.6666666666697,1959.750000000003,1959.8333333333362,1959.9166666666697,1960,1960.0833333333364,1960.1666666666697,1960.2500000000032,1960.3333333333364,1960.4166666666697,1960.5000000000032,1960.5833333333364,1960.6666666666699,1960.7500000000032,1960.8333333333367,1960.9166666666699],"y":[112,118,132,129,121,135,148,148,136,119,104,118,115,126,141,135,125,149,170,170,158,133,114,140,145,150,178,163,172,178,199,199,184,162,146,166,171,180,193,181,183,218,230,242,209,191,172,194,196,196,236,235,229,243,264,272,237,211,180,201,204,188,235,227,234,264,302,293,259,229,203,229,242,233,267,269,270,315,364,347,312,274,237,278,284,277,317,313,318,374,413,405,355,306,271,306,315,301,356,348,355,422,465,467,404,347,305,336,340,318,362,348,363,435,491,505,404,359,310,337,360,342,406,396,420,472,548,559,463,407,362,405,417,391,419,461,472,535,622,606,508,461,390,432],"mode":"lines","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"AirPassengers Time Series","xaxis":{"domain":[0,1],"automargin":true,"title":"Time"},"yaxis":{"domain":[0,1],"automargin":true,"title":"Passengers"},"hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[1949,1949.0833333333333,1949.1666666666667,1949.25,1949.3333333333335,1949.4166666666667,1949.5000000000002,1949.5833333333335,1949.6666666666667,1949.7500000000002,1949.8333333333335,1949.916666666667,1950,1950.0833333333337,1950.166666666667,1950.2500000000005,1950.3333333333337,1950.416666666667,1950.5000000000005,1950.5833333333337,1950.6666666666672,1950.7500000000005,1950.8333333333339,1950.9166666666672,1951,1951.0833333333339,1951.1666666666672,1951.2500000000007,1951.3333333333339,1951.4166666666674,1951.5000000000007,1951.5833333333339,1951.6666666666674,1951.7500000000007,1951.8333333333342,1951.9166666666674,1952,1952.0833333333342,1952.1666666666674,1952.2500000000009,1952.3333333333342,1952.4166666666677,1952.5000000000009,1952.5833333333344,1952.6666666666677,1952.7500000000011,1952.8333333333344,1952.9166666666677,1953,1953.0833333333344,1953.1666666666679,1953.2500000000011,1953.3333333333346,1953.4166666666679,1953.5000000000011,1953.5833333333346,1953.6666666666679,1953.7500000000014,1953.8333333333346,1953.9166666666681,1954,1954.0833333333346,1954.1666666666681,1954.2500000000014,1954.3333333333348,1954.4166666666681,1954.5000000000016,1954.5833333333348,1954.6666666666681,1954.7500000000016,1954.8333333333348,1954.9166666666683,1955,1955.0833333333351,1955.1666666666683,1955.2500000000018,1955.3333333333351,1955.4166666666683,1955.5000000000018,1955.5833333333351,1955.6666666666686,1955.7500000000018,1955.8333333333353,1955.9166666666686,1956,1956.0833333333353,1956.1666666666686,1956.250000000002,1956.3333333333353,1956.4166666666688,1956.500000000002,1956.5833333333353,1956.6666666666688,1956.750000000002,1956.8333333333355,1956.9166666666688,1957,1957.0833333333355,1957.1666666666688,1957.2500000000023,1957.3333333333355,1957.416666666669,1957.5000000000023,1957.5833333333358,1957.666666666669,1957.7500000000025,1957.8333333333358,1957.916666666669,1958,1958.0833333333358,1958.1666666666692,1958.2500000000025,1958.333333333336,1958.4166666666692,1958.5000000000025,1958.583333333336,1958.6666666666692,1958.7500000000027,1958.833333333336,1958.9166666666695,1959,1959.083333333336,1959.1666666666695,1959.2500000000027,1959.3333333333362,1959.4166666666695,1959.500000000003,1959.5833333333362,1959.6666666666697,1959.750000000003,1959.8333333333362,1959.9166666666697,1960,1960.0833333333364,1960.1666666666697,1960.2500000000032,1960.3333333333364,1960.4166666666697,1960.5000000000032,1960.5833333333364,1960.6666666666699,1960.7500000000032,1960.8333333333367,1960.9166666666699],"y":[112,118,132,129,121,135,148,148,136,119,104,118,115,126,141,135,125,149,170,170,158,133,114,140,145,150,178,163,172,178,199,199,184,162,146,166,171,180,193,181,183,218,230,242,209,191,172,194,196,196,236,235,229,243,264,272,237,211,180,201,204,188,235,227,234,264,302,293,259,229,203,229,242,233,267,269,270,315,364,347,312,274,237,278,284,277,317,313,318,374,413,405,355,306,271,306,315,301,356,348,355,422,465,467,404,347,305,336,340,318,362,348,363,435,491,505,404,359,310,337,360,342,406,396,420,472,548,559,463,407,362,405,417,391,419,461,472,535,622,606,508,461,390,432],"mode":"lines","type":"scatter","marker":{"color":"rgba(31,119,180,1)","line":{"color":"rgba(31,119,180,1)"}},"error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"line":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="descomposición-de-series" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="descomposición-de-series"><span class="header-section-number">2.3</span> Descomposición de series</h2>
+<p>Más adelante veremos paso a paso la descomposición de series temporales.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>decomposeAP <span class="ot">&lt;-</span> <span class="fu">decompose</span>(AP.ts,<span class="st">"multiplicative"</span>)</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(decomposeAP)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>¿Qué notamos en este gráfico? tendencia, ciclos, estacionalidad.</p>
+</section>
+<section id="otros-gráficos-útiles-para-estudiar-el-efecto-estacional" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="otros-gráficos-útiles-para-estudiar-el-efecto-estacional"><span class="header-section-number">2.4</span> Otros gráficos útiles para estudiar el efecto estacional</h2>
+<ul>
+<li>El gráfico de caja no es útil pues no muestra la secuencia temporal.</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(AP.ts<span class="sc">~</span><span class="fu">cycle</span>(AP.ts),<span class="at">xlab=</span><span class="st">"mes"</span>, <span class="at">ylab =</span> <span class="st">"pasajeros (miles)"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>Son más útiles los gráficos estacionales.</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggseasonplot</span>(AP.ts, <span class="at">year.labels=</span><span class="cn">FALSE</span>, <span class="at">continuous=</span><span class="cn">TRUE</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggseasonplot</span>(AP.ts, <span class="at">year.labels=</span><span class="cn">FALSE</span>, <span class="at">continuous=</span><span class="cn">TRUE</span>, <span class="at">polar =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-18-2.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="ejemplo-producción-de-cemento" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> <strong>Ejemplo:</strong> Producción de cemento</h1>
+<p>Producción trimestral total de cemento en Portland en Australia (en millones de toneladas), desde el primer trimestre de 1956 hasta el primer trimestre de 2014.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>cemento<span class="ot">&lt;-</span>fpp2<span class="sc">::</span>qcement</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(cemento)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Time-Series [1:233] from 1956 to 2014: 0.465 0.532 0.561 0.57 0.529 0.604 0.603 0.582 0.554 0.62 ...</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(cemento)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      Qtr1  Qtr2  Qtr3  Qtr4
+1956 0.465 0.532 0.561 0.570
+1957 0.529 0.604            </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tail</span>(cemento)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      Qtr1  Qtr2  Qtr3  Qtr4
+2012                   2.503
+2013 2.049 2.528 2.637 2.565
+2014 2.229                  </code></pre>
+</div>
+</div>
+<ul>
+<li>Interpretación de estos gráficos.</li>
+</ul>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true" href="">Gráfico lineal</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false" href="">Gráfico estacional</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-3" role="tab" aria-controls="tabset-3-3" aria-selected="false" href="">Gráfico de subseries estacionales</a></li></ul>
+<div class="tab-content">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(cemento)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggseasonplot</span>(cemento, <span class="at">year.labels=</span><span class="cn">FALSE</span>, <span class="at">continuous=</span><span class="cn">TRUE</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-3-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-3-tab">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsubseriesplot</span>(cemento)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="ejemplo-gasto-de-medicamento-anti-diabético-mensual" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> <strong>Ejemplo:</strong> gasto de medicamento anti-diabético (mensual)</h1>
+<p>Gasto mensual del gobierno (en millones de dólares) de julio de 1991 a junio de 2008.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>medicamento<span class="ot">&lt;-</span>fpp2<span class="sc">::</span>a10</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<ul>
+<li>Interpretación de estos gráficos.</li>
+</ul>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true" href="">Gráfico lineal</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false" href="">Gráfico estacional</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-3" role="tab" aria-controls="tabset-4-3" aria-selected="false" href="">Gráfico de subseries estacionales</a></li></ul>
+<div class="tab-content">
+<div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(medicamento)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggseasonplot</span>(medicamento, <span class="at">year.labels=</span><span class="cn">FALSE</span>, <span class="at">continuous=</span><span class="cn">TRUE</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggseasonplot</span>(medicamento, <span class="at">year.labels=</span><span class="cn">FALSE</span>, <span class="at">continuous=</span><span class="cn">TRUE</span>, <span class="at">polar =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-4-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-3-tab">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsubseriesplot</span>(medicamento)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="ejemplo-producción-de-cerveza-en-australia" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> <strong>Ejemplo:</strong> Producción de cerveza en Australia</h1>
+<p>Producción trimestral total de cerveza en Australia (en megalitros) desde el primer trimestre de 1956 hasta el segundo trimestre de 2010.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>cerveza<span class="ot">&lt;-</span>fpp2<span class="sc">::</span>ausbeer</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<ul>
+<li>Interpretación de estos gráficos.</li>
+</ul>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true" href="">Gráfico lineal</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false" href="">Gráfico estacional</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-3" role="tab" aria-controls="tabset-5-3" aria-selected="false" href="">Gráfico de subseries estacionales</a></li></ul>
+<div class="tab-content">
+<div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(cerveza)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-29-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggseasonplot</span>(cerveza, <span class="at">year.labels=</span><span class="cn">FALSE</span>, <span class="at">continuous=</span><span class="cn">TRUE</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-5-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-3-tab">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsubseriesplot</span>(cerveza)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<section id="gráficos-de-rezagos" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="gráficos-de-rezagos"><span class="header-section-number">5.1</span> Gráficos de rezagos</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gglagplot</span>(cerveza,<span class="at">lags=</span><span class="dv">16</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gglagplot</span>(cerveza,<span class="at">lags=</span><span class="dv">16</span>,<span class="at">do.lines=</span><span class="cn">FALSE</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-32-2.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>h<span class="ot">=</span><span class="dv">1</span></span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gglagplot</span>(cerveza,<span class="at">lags=</span>h,<span class="at">do.lines=</span><span class="cn">FALSE</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-33-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>cerveza.shift<span class="ot">&lt;-</span><span class="fu">shift</span>(cerveza,<span class="at">n=</span>h,<span class="at">type=</span><span class="st">"lag"</span>)</span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cbind</span>(cerveza,cerveza.shift)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        cerveza cerveza.shift
+1956 Q1     284            NA
+1956 Q2     213           284
+1956 Q3     227           213
+1956 Q4     308           227
+1957 Q1     262           308
+1957 Q2     228           262
+1957 Q3     236           228
+1957 Q4     320           236
+1958 Q1     272           320
+1958 Q2     233           272
+1958 Q3     237           233
+1958 Q4     313           237
+1959 Q1     261           313
+1959 Q2     227           261
+1959 Q3     250           227
+1959 Q4     314           250
+1960 Q1     286           314
+1960 Q2     227           286
+1960 Q3     260           227
+1960 Q4     311           260
+1961 Q1     295           311
+1961 Q2     233           295
+1961 Q3     257           233
+1961 Q4     339           257
+1962 Q1     279           339
+1962 Q2     250           279
+1962 Q3     270           250
+1962 Q4     346           270
+1963 Q1     294           346
+1963 Q2     255           294
+1963 Q3     278           255
+1963 Q4     363           278
+1964 Q1     313           363
+1964 Q2     273           313
+1964 Q3     300           273
+1964 Q4     370           300
+1965 Q1     331           370
+1965 Q2     288           331
+1965 Q3     306           288
+1965 Q4     386           306
+1966 Q1     335           386
+1966 Q2     288           335
+1966 Q3     308           288
+1966 Q4     402           308
+1967 Q1     353           402
+1967 Q2     316           353
+1967 Q3     325           316
+1967 Q4     405           325
+1968 Q1     393           405
+1968 Q2     319           393
+1968 Q3     327           319
+1968 Q4     442           327
+1969 Q1     383           442
+1969 Q2     332           383
+1969 Q3     361           332
+1969 Q4     446           361
+1970 Q1     387           446
+1970 Q2     357           387
+1970 Q3     374           357
+1970 Q4     466           374
+1971 Q1     410           466
+1971 Q2     370           410
+1971 Q3     379           370
+1971 Q4     487           379
+1972 Q1     419           487
+1972 Q2     378           419
+1972 Q3     393           378
+1972 Q4     506           393
+1973 Q1     458           506
+1973 Q2     387           458
+1973 Q3     427           387
+1973 Q4     565           427
+1974 Q1     465           565
+1974 Q2     445           465
+1974 Q3     450           445
+1974 Q4     556           450
+1975 Q1     500           556
+1975 Q2     452           500
+1975 Q3     435           452
+1975 Q4     554           435
+1976 Q1     510           554
+1976 Q2     433           510
+1976 Q3     453           433
+1976 Q4     548           453
+1977 Q1     486           548
+1977 Q2     453           486
+1977 Q3     457           453
+1977 Q4     566           457
+1978 Q1     515           566
+1978 Q2     464           515
+1978 Q3     431           464
+1978 Q4     588           431
+1979 Q1     503           588
+1979 Q2     443           503
+1979 Q3     448           443
+1979 Q4     555           448
+1980 Q1     513           555
+1980 Q2     427           513
+1980 Q3     473           427
+1980 Q4     526           473
+1981 Q1     548           526
+1981 Q2     440           548
+1981 Q3     469           440
+1981 Q4     575           469
+1982 Q1     493           575
+1982 Q2     433           493
+1982 Q3     480           433
+1982 Q4     576           480
+1983 Q1     475           576
+1983 Q2     405           475
+1983 Q3     435           405
+1983 Q4     535           435
+1984 Q1     453           535
+1984 Q2     430           453
+1984 Q3     417           430
+1984 Q4     552           417
+1985 Q1     464           552
+1985 Q2     417           464
+1985 Q3     423           417
+1985 Q4     554           423
+1986 Q1     459           554
+1986 Q2     428           459
+1986 Q3     429           428
+1986 Q4     534           429
+1987 Q1     481           534
+1987 Q2     416           481
+1987 Q3     440           416
+1987 Q4     538           440
+1988 Q1     474           538
+1988 Q2     440           474
+1988 Q3     447           440
+1988 Q4     598           447
+1989 Q1     467           598
+1989 Q2     439           467
+1989 Q3     446           439
+1989 Q4     567           446
+1990 Q1     485           567
+1990 Q2     441           485
+1990 Q3     429           441
+1990 Q4     599           429
+1991 Q1     464           599
+1991 Q2     424           464
+1991 Q3     436           424
+1991 Q4     574           436
+1992 Q1     443           574
+1992 Q2     410           443
+1992 Q3     420           410
+1992 Q4     532           420
+1993 Q1     433           532
+1993 Q2     421           433
+1993 Q3     410           421
+1993 Q4     512           410
+1994 Q1     449           512
+1994 Q2     381           449
+1994 Q3     423           381
+1994 Q4     531           423
+1995 Q1     426           531
+1995 Q2     408           426
+1995 Q3     416           408
+1995 Q4     520           416
+1996 Q1     409           520
+1996 Q2     398           409
+1996 Q3     398           398
+1996 Q4     507           398
+1997 Q1     432           507
+1997 Q2     398           432
+1997 Q3     406           398
+1997 Q4     526           406
+1998 Q1     428           526
+1998 Q2     397           428
+1998 Q3     403           397
+1998 Q4     517           403
+1999 Q1     435           517
+1999 Q2     383           435
+1999 Q3     424           383
+1999 Q4     521           424
+2000 Q1     421           521
+2000 Q2     402           421
+2000 Q3     414           402
+2000 Q4     500           414
+2001 Q1     451           500
+2001 Q2     380           451
+2001 Q3     416           380
+2001 Q4     492           416
+2002 Q1     428           492
+2002 Q2     408           428
+2002 Q3     406           408
+2002 Q4     506           406
+2003 Q1     435           506
+2003 Q2     380           435
+2003 Q3     421           380
+2003 Q4     490           421
+2004 Q1     435           490
+2004 Q2     390           435
+2004 Q3     412           390
+2004 Q4     454           412
+2005 Q1     416           454
+2005 Q2     403           416
+2005 Q3     408           403
+2005 Q4     482           408
+2006 Q1     438           482
+2006 Q2     386           438
+2006 Q3     405           386
+2006 Q4     491           405
+2007 Q1     427           491
+2007 Q2     383           427
+2007 Q3     394           383
+2007 Q4     473           394
+2008 Q1     420           473
+2008 Q2     390           420
+2008 Q3     410           390
+2008 Q4     488           410
+2009 Q1     415           488
+2009 Q2     398           415
+2009 Q3     419           398
+2009 Q4     488           419
+2010 Q1     414           488
+2010 Q2     374           414</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cerveza<span class="sc">~</span>cerveza.shift,<span class="at">xlim=</span><span class="fu">c</span>(<span class="dv">200</span>,<span class="dv">600</span>),<span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">200</span>,<span class="dv">600</span>),</span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">xy.labels=</span><span class="cn">FALSE</span>,<span class="at">col=</span><span class="fu">cycle</span>(cerveza),<span class="at">pch=</span><span class="dv">20</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-34-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(cerveza[<span class="sc">-</span><span class="dv">1</span>],cerveza.shift[<span class="sc">-</span><span class="dv">1</span>])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.687697</code></pre>
+</div>
+</div>
+</section>
+<section id="funcion-de-autocorrelacion" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="funcion-de-autocorrelacion"><span class="header-section-number">5.2</span> Funcion de autocorrelacion</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="fu">acf</span>(cerveza)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-35-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggAcf</span>(cerveza)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-35-2.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="fu">acf</span>(ausbeer, <span class="at">plot =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Autocorrelations of series 'ausbeer', by lag
+
+ 0.00  0.25  0.50  0.75  1.00  1.25  1.50  1.75  2.00  2.25  2.50  2.75  3.00 
+1.000 0.684 0.500 0.667 0.940 0.644 0.458 0.621 0.887 0.598 0.410 0.574 0.835 
+ 3.25  3.50  3.75  4.00  4.25  4.50  4.75  5.00  5.25  5.50  5.75 
+0.543 0.354 0.519 0.770 0.481 0.300 0.454 0.704 0.418 0.236 0.393 </code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="ejemplo-muertes-por-accidente-en-eu-1973-1978" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> <strong>Ejemplo:</strong> Muertes por accidente en EU 1973-1978</h1>
+<ul>
+<li>Interpretación de estos gráficos.</li>
+</ul>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true" href="">Gráfico lineal</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false" href="">Gráfico estacional</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-3" role="tab" aria-controls="tabset-6-3" aria-selected="false" href="">Gráficos de rezagos</a></li></ul>
+<div class="tab-content">
+<div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(USAccDeaths)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-36-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggseasonplot</span>(USAccDeaths, <span class="at">year.labels=</span><span class="cn">FALSE</span>, <span class="at">continuous=</span><span class="cn">TRUE</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-37-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-6-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-3-tab">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gglagplot</span>(USAccDeaths,<span class="at">lags=</span><span class="dv">16</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-38-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="ejemplo-series-multivariadas" class="level1" data-number="7">
+<h1 data-number="7"><span class="header-section-number">7</span> <strong>Ejemplo:</strong> Series multivariadas</h1>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>arrivals<span class="ot">&lt;-</span>fpp2<span class="sc">::</span>arrivals</span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(arrivals)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Time-Series [1:127, 1:4] from 1981 to 2012: 14.76 9.32 10.17 19.51 17.12 ...
+ - attr(*, "dimnames")=List of 2
+  ..$ : NULL
+  ..$ : chr [1:4] "Japan" "NZ" "UK" "US"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a>arrivals</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>          Japan      NZ      UK      US
+1981 Q1  14.763  49.140  45.266  32.316
+1981 Q2   9.321  87.467  19.886  23.721
+1981 Q3  10.166  85.841  24.839  24.533
+1981 Q4  19.509  61.882  52.264  33.438
+1982 Q1  17.117  42.045  53.636  33.527
+1982 Q2  10.617  63.081  34.802  28.366
+1982 Q3  11.737  73.275  31.126  30.856
+1982 Q4  20.961  54.808  53.619  33.293
+1983 Q1  20.671  41.030  43.423  32.472
+1983 Q2  12.235  56.155  23.421  32.369
+1983 Q3  14.567  69.395  29.142  37.476
+1983 Q4  24.363  58.423  51.771  38.112
+1984 Q1  23.169  37.039  44.182  42.553
+1984 Q2  16.296  71.564  24.920  41.277
+1984 Q3  18.504  71.260  27.566  33.056
+1984 Q4  29.938  54.597  48.880  44.472
+1985 Q1  30.240  41.646  49.563  47.792
+1985 Q2  20.280  63.668  23.867  43.070
+1985 Q3  20.908  67.803  25.895  41.116
+1985 Q4  36.169  72.177  54.092  65.428
+1986 Q1  37.989  55.192  54.903  59.377
+1986 Q2  32.366  89.073  26.089  53.283
+1986 Q3  28.131  97.746  28.248  48.510
+1986 Q4  47.150  94.696  66.813  85.878
+1987 Q1  51.736  71.130  61.167  84.130
+1987 Q2  38.254 111.416  32.400  64.347
+1987 Q3  53.807 127.619  33.287  65.976
+1987 Q4  71.807 117.078  72.115  96.165
+1988 Q1  80.300  90.498  81.925  78.609
+1988 Q2  79.596 135.435  42.091  69.306
+1988 Q3  88.708 176.899  46.253  86.267
+1988 Q4 103.738 131.457  90.062  92.738
+1989 Q1  94.172  83.029  84.191  73.321
+1989 Q2  76.462 111.748  48.709  59.819
+1989 Q3  88.393 128.510  46.905  60.868
+1989 Q4  90.527 126.021  93.075  67.761
+1990 Q1 119.654  75.584  81.185  67.637
+1990 Q2 106.965 109.472  53.693  56.153
+1990 Q3 128.472 122.164  48.037  58.783
+1990 Q4 124.773 111.222  94.827  69.018
+1991 Q1 119.638  90.067  79.365  63.235
+1991 Q2 115.049 114.050  52.961  56.691
+1991 Q3 140.470 152.662  42.366  85.473
+1991 Q4 153.436 123.821  89.041  66.332
+1992 Q1 166.732  75.376  87.850  69.861
+1992 Q2 141.886 107.369  57.261  61.501
+1992 Q3 160.455 128.550  51.058  57.869
+1992 Q4 160.807 136.250  93.736  73.632
+1993 Q1 178.466  90.758  95.137  76.323
+1993 Q2 151.904 124.972  55.661  62.718
+1993 Q3 168.131 153.153  56.400  64.731
+1993 Q4 172.358 130.393 103.089  77.495
+1994 Q1 191.367  90.095 100.250  81.428
+1994 Q2 158.207 113.799  57.464  63.554
+1994 Q3 183.289 148.605  61.831  66.505
+1994 Q4 188.273 127.879 115.736  78.190
+1995 Q1 196.480  95.295 112.684  83.047
+1995 Q2 174.307 130.073  64.209  67.448
+1995 Q3 214.067 166.383  59.287  69.234
+1995 Q4 197.850 146.632 111.719  85.160
+1996 Q1 227.335 132.410 108.173  84.995
+1996 Q2 174.325 166.735  64.632  71.005
+1996 Q3 219.347 205.120  64.742  71.412
+1996 Q4 192.137 167.569 129.994  89.483
+1997 Q1 223.640 142.502 126.261  87.405
+1997 Q2 167.269 160.522  65.146  73.061
+1997 Q3 227.641 205.250  74.071  79.986
+1997 Q4 195.350 177.366 145.139  89.141
+1998 Q1 205.468 128.179 143.115 101.167
+1998 Q2 168.520 184.943  82.747  85.384
+1998 Q3 200.860 212.263  78.303  82.586
+1998 Q4 176.235 183.996 163.356 104.760
+1999 Q1 193.822 143.015 160.239 113.860
+1999 Q2 154.860 179.577  81.152  92.494
+1999 Q3 188.080 215.732 107.941  95.001
+1999 Q4 170.689 190.461 179.102 115.704
+2000 Q1 192.023 154.537 161.953 118.840
+2000 Q2 154.701 212.401 105.394 107.313
+2000 Q3 182.130 229.048 107.231 131.833
+2000 Q4 192.135 221.071 205.874 130.100
+2001 Q1 193.645 162.480 184.901 126.702
+2001 Q2 156.303 215.840 107.454 113.471
+2001 Q3 186.861 233.074 121.889 105.239
+2001 Q4 136.748 203.493 202.988 101.058
+2002 Q1 177.263 159.879 206.655 121.127
+2002 Q2 158.357 191.215  95.564  97.016
+2002 Q3 183.821 226.008 115.950 102.261
+2002 Q4 196.006 213.000 224.496 114.103
+2003 Q1 176.132 150.700 196.276 112.908
+2003 Q2 102.633 203.400 107.563  94.212
+2003 Q3 156.396 241.800 125.171 102.961
+2003 Q4 192.591 243.200 243.894 112.039
+2004 Q1 185.175 188.873 205.423 114.017
+2004 Q2 153.363 252.262 111.924 101.065
+2004 Q3 181.659 312.956 125.132 105.884
+2004 Q4 190.143 278.709 233.761 112.335
+2005 Q1 193.547 219.527 235.242 122.725
+2005 Q2 135.461 270.782 105.370 104.542
+2005 Q3 176.242 325.633 131.141 107.725
+2005 Q4 180.085 282.908 237.053 111.286
+2006 Q1 189.187 212.323 224.933 123.608
+2006 Q2 128.920 269.964 116.211 109.865
+2006 Q3 163.649 307.149 123.808 107.787
+2006 Q4 169.314 286.361 269.292 114.824
+2007 Q1 165.823 219.885 231.686 124.677
+2007 Q2 111.484 301.654 108.543 108.089
+2007 Q3 149.065 320.737 122.734 107.738
+2007 Q4 146.673 295.727 226.031 119.189
+2008 Q1 136.544 222.770 230.109 128.066
+2008 Q2  88.879 282.076 107.430  99.471
+2008 Q3 121.951 304.979 115.758 111.243
+2008 Q4 109.858 303.481 218.864 115.636
+2009 Q1 106.123 221.287 210.109 119.158
+2009 Q2  65.748 275.761 113.973 105.507
+2009 Q3  88.371 311.431 116.517 118.979
+2009 Q4  95.214 301.983 223.178 136.094
+2010 Q1 109.072 228.162 213.568 127.535
+2010 Q2  71.253 281.791  99.497 105.974
+2010 Q3 117.876 330.812 108.208 111.615
+2010 Q4  99.987 320.897 225.395 127.002
+2011 Q1  92.889 239.103 188.560 125.264
+2011 Q2  53.397 292.072 110.212 101.814
+2011 Q3  96.467 311.994 107.089 101.925
+2011 Q4  89.900 329.470 202.240 127.150
+2012 Q1  98.180 247.910 194.640 129.520
+2012 Q2  59.760 301.880  92.970 105.700
+2012 Q3 101.900 319.840 101.690 106.540</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(arrivals)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-39-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(arrivals, <span class="at">facets =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-39-2.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(arrivals, <span class="at">facets =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb82-2"><a href="#cb82-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>() <span class="sc">+</span></span>
+<span id="cb82-3"><a href="#cb82-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Llegadas internacionales a Australia"</span>,</span>
+<span id="cb82-4"><a href="#cb82-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"llegadas (miles)"</span>,</span>
+<span id="cb82-5"><a href="#cb82-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-39-3.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="ejemplo-promedio-diario-industrial-dow-jone" class="level1" data-number="8">
+<h1 data-number="8"><span class="header-section-number">8</span> <strong>Ejemplo:</strong> Promedio diario industrial Dow Jone</h1>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="fu">getSymbols</span>(<span class="st">"^DJI"</span>,<span class="at">from =</span> <span class="st">"2016/12/31"</span>,</span>
+<span id="cb83-2"><a href="#cb83-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">to =</span> <span class="st">"2018/12/31"</span>,</span>
+<span id="cb83-3"><a href="#cb83-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">periodicity =</span> <span class="st">"daily"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "DJI"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> DJI<span class="sc">$</span>DJI.Close</span>
+<span id="cb85-2"><a href="#cb85-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(xts)</span>
+<span id="cb85-3"><a href="#cb85-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(y)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-40-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="co">#note el comportamiento en diferentes segmentos de tiempo.</span></span>
+<span id="cb86-2"><a href="#cb86-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(y[<span class="dv">1</span><span class="sc">:</span><span class="dv">200</span>])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-40-2.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb87"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(y[<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_files/figure-html/unnamed-chunk-40-3.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="paquetes-en-r-y-extensiones" class="level1" data-number="9">
+<h1 data-number="9"><span class="header-section-number">9</span> Paquetes en R y extensiones</h1>
+<p>Existen una variedad de formas de definir objetos de series temporales en R y distintos paquetes para graficar.</p>
+<p><a href="https://cran.r-project.org/web/views/TimeSeries.html" class="uri">https://cran.r-project.org/web/views/TimeSeries.html</a></p>
+<p>Les puede servir:</p>
+<p><a href="https://www.data-to-viz.com/" class="uri">https://www.data-to-viz.com/</a></p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiado");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiado");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

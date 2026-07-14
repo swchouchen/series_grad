@@ -1,0 +1,1803 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<script src="presentacion_files/libs/clipboard/clipboard.min.js"></script>
+<script src="presentacion_files/libs/quarto-html/tabby.min.js"></script>
+<script src="presentacion_files/libs/quarto-html/popper.min.js"></script>
+<script src="presentacion_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="presentacion_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="presentacion_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="presentacion_files/libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="presentacion_files/libs/quarto-contrib/reveal-auto-agenda-0.0.3/reveal-auto-agenda.css" rel="stylesheet"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.25">
+
+  <meta name="author" content="Shu Wei Chou Chen">
+  <title>Tema 4: Regresión con series de tiempo</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="presentacion_files/libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="presentacion_files/libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="presentacion_files/libs/revealjs/dist/theme/quarto-829c66079de1ba6dba869a367cd4b667.css">
+  <link href="presentacion_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="presentacion_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="presentacion_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="presentacion_files/libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
+  <link href="presentacion_files/libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
+  <link href="presentacion_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">Tema 4: Regresión con series de tiempo</h1>
+  <p class="subtitle"><a href="https://swchouchen.github.io/series">Curso: Análisis de series temporales</a></p>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+<a href="https://swchouchen.github.io">Shu Wei Chou Chen</a> <a href="https://orcid.org/0000-0001-5495-2486" class="quarto-title-author-orcid"> <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg=="></a>
+</div>
+<div class="quarto-title-author-email">
+<a href="mailto:shuwei.chou@ucr.ac.cr">shuwei.chou@ucr.ac.cr</a>
+</div>
+        <p class="quarto-title-affiliation">
+            <a href="https://www.estadistica.ucr.ac.cr/">
+            Escuela de Estadística, Universidad de Costa Rica
+            </a>
+          </p>
+    </div>
+</div>
+
+</section>
+<section id="paquetes-de-r" class="slide level2">
+<h2>Paquetes de R</h2>
+<p>Para este tema, se necesita cargar estos paquetes:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-2"><a href=""></a><span class="fu">library</span>(forecast)</span>
+<span id="cb1-3"><a href=""></a><span class="fu">library</span>(fpp2)</span>
+<span id="cb1-4"><a href=""></a><span class="fu">library</span>(astsa)</span>
+<span id="cb1-5"><a href=""></a><span class="fu">library</span>(car)</span>
+<span id="cb1-6"><a href=""></a><span class="fu">library</span>(astsa)</span>
+<span id="cb1-7"><a href=""></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-8"><a href=""></a><span class="fu">library</span>(gamair)</span>
+<span id="cb1-9"><a href=""></a><span class="fu">library</span>(mgcv)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section>
+<section id="introducción" class="title-slide slide level1 agenda-slide center">
+<h1>Introducción</h1>
+<div class="agenda-heading">
+<p>Contenido</p>
+</div>
+<div class="agenda">
+<ol>
+<li><div class="agenda-active">
+<p>Introducción</p>
+</div></li>
+<li><div class="agenda-inactive agenda-post-active">
+<p>Modelos de regresión</p>
+</div></li>
+<li><div class="agenda-inactive agenda-post-active">
+<p>Regresión espuria</p>
+</div></li>
+<li><div class="agenda-inactive agenda-post-active">
+<p>El tiempo como covariables</p>
+</div></li>
+<li><div class="agenda-inactive agenda-post-active">
+<p>Pronósticos usando regresión</p>
+</div></li>
+<li><div class="agenda-inactive agenda-post-active">
+<p>Extensiones de modelos de regresión</p>
+</div></li>
+</ol>
+</div>
+</section>
+<section id="introducción-1" class="slide level2">
+<h2>Introducción</h2>
+<ul>
+<li><p>La idea es ajustar un modelo de regresión para la serie temporal <span class="math inline">\(Y_t, t=1,...,T\)</span> utlizando un conjunto de <span class="math inline">\(p\)</span> covariables: <span class="math inline">\(X_1,...,X_p\)</span>.</p></li>
+<li><p>Por ejemplo:</p>
+<ul>
+<li><span class="math inline">\(Y\)</span> una serie mensual de ventas con la variable independiente <span class="math inline">\(X_1\)</span> gasto mensual en anuncios.</li>
+<li><span class="math inline">\(Y\)</span> una serie diaria de demanda de energía eléctrica con las variables independientes: <span class="math inline">\(X_1\)</span> temperatura y <span class="math inline">\(X_2\)</span> el día de la semana.</li>
+</ul></li>
+</ul>
+</section></section>
+<section>
+<section id="modelos-de-regresión" class="title-slide slide level1 agenda-slide center">
+<h1>Modelos de regresión</h1>
+<div class="agenda-heading">
+<p>Contenido</p>
+</div>
+<div class="agenda">
+<ol>
+<li><div class="agenda-inactive agenda-pre-active">
+<p>Introducción</p>
+</div></li>
+<li><div class="agenda-active">
+<p>Modelos de regresión</p>
+</div></li>
+<li><div class="agenda-inactive agenda-post-active">
+<p>Regresión espuria</p>
+</div></li>
+<li><div class="agenda-inactive agenda-post-active">
+<p>El tiempo como covariables</p>
+</div></li>
+<li><div class="agenda-inactive agenda-post-active">
+<p>Pronósticos usando regresión</p>
+</div></li>
+<li><div class="agenda-inactive agenda-post-active">
+<p>Extensiones de modelos de regresión</p>
+</div></li>
+</ol>
+</div>
+</section>
+<section id="regresión-lineal-simple" class="slide level2">
+<h2>Regresión lineal simple</h2>
+<p>Un modelo de regresión lineal simple establece una relación lineal entre una variable dependiente <span class="math inline">\(Y\)</span> y una sola variable predictora <span class="math inline">\(X\)</span>:</p>
+<p><span class="math display">\[
+  Y_t = \beta_0 + \beta_1 X_t + \epsilon_t,
+\]</span> donde los coeficientes <span class="math inline">\(\beta_0\)</span> y <span class="math inline">\(\beta_1\)</span> denotan la intersección y la pendientes, respectivamente;<br>
+<span class="math inline">\(\varepsilon_t \overset{\text{iid}}{\sim} N(0,\sigma^2)\)</span>.</p>
+<ul>
+<li>La intercepción <span class="math inline">\(\beta_0\)</span> representa el valor predicho de <span class="math inline">\(y\)</span> cuando <span class="math inline">\(X=0\)</span>.</li>
+<li>La pendiente <span class="math inline">\(\beta_1\)</span> representa el cambio promedio previsto en <span class="math inline">\(Y\)</span> resultante de un aumento de una unidad en <span class="math inline">\(X\)</span>.</li>
+</ul>
+</section>
+<section class="slide level2">
+
+
+<img data-src="presentacion_files/figure-revealjs/unnamed-chunk-2-1.png" width="384" class="r-stretch quarto-figure-center"><p class="caption">Ejemplo simulado de un modelo de regresión lineal simple (Fig 5.1 de Hyndman)</p></section>
+<section id="ejemplo" class="slide level2">
+<h2>Ejemplo</h2>
+<ul>
+<li>La serie de cambios porcentuales trimestrales (tasas de crecimiento) del gasto de consumo personal real (<span class="math inline">\(Y_t\)</span>, variable dependiente), y el cambio porcentual de los ingresos disponibles(<span class="math inline">\(X_t\)</span>, covariable), para EE.UU. desde 1970 a 2016.</li>
+</ul>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href=""></a><span class="fu">head</span>(uschange)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        Consumption     Income Production   Savings Unemployment
+1970 Q1   0.6159862  0.9722610 -2.4527003 4.8103115          0.9
+1970 Q2   0.4603757  1.1690847 -0.5515251 7.2879923          0.5
+1970 Q3   0.8767914  1.5532705 -0.3587079 7.2890131          0.5
+1970 Q4  -0.2742451 -0.2552724 -2.1854549 0.9852296          0.7
+1971 Q1   1.8973708  1.9871536  1.9097341 3.6577706         -0.1
+1971 Q2   0.9119929  1.4473342  0.9015358 6.0513418         -0.1</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href=""></a><span class="fu">autoplot</span>(uschange[,<span class="fu">c</span>(<span class="st">"Consumption"</span>,<span class="st">"Income"</span>)]) <span class="sc">+</span></span>
+<span id="cb4-2"><a href=""></a>  <span class="fu">ylab</span>(<span class="st">"% change"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Year"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-4-1.png" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section class="slide level2">
+
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href=""></a>uschange <span class="sc">%&gt;%</span></span>
+<span id="cb5-2"><a href=""></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb5-3"><a href=""></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>Income, <span class="at">y=</span>Consumption)) <span class="sc">+</span></span>
+<span id="cb5-4"><a href=""></a>    <span class="fu">ylab</span>(<span class="st">"Consumption (quarterly % change)"</span>) <span class="sc">+</span></span>
+<span id="cb5-5"><a href=""></a>    <span class="fu">xlab</span>(<span class="st">"Income (quarterly % change)"</span>) <span class="sc">+</span></span>
+<span id="cb5-6"><a href=""></a>    <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb5-7"><a href=""></a>    <span class="fu">geom_smooth</span>(<span class="at">method=</span><span class="st">"lm"</span>, <span class="at">se=</span><span class="cn">FALSE</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-5-1.png" width="384"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>Más adelante vemos que <code>tslm</code> es programado para series temporales, pero el cálculo es lo mismo.</li>
+</ul>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href=""></a><span class="fu">lm</span>(Consumption <span class="sc">~</span> Income, <span class="at">data=</span>uschange)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = Consumption ~ Income, data = uschange)
+
+Coefficients:
+(Intercept)       Income  
+     0.5451       0.2806  </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href=""></a><span class="fu">tslm</span>(Consumption <span class="sc">~</span> Income, <span class="at">data=</span>uschange)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+tslm(formula = Consumption ~ Income, data = uschange)
+
+Coefficients:
+(Intercept)       Income  
+     0.5451       0.2806  </code></pre>
+</div>
+</div>
+<p><span class="math display">\[Y_t=0.55 + 0.28X_t + \epsilon_t\]</span></p>
+<ul>
+<li>El coeficiente de pendiente muestra que un aumento de una unidad en <span class="math inline">\(X\)</span>(un aumento de 1 punto porcentual en el ingreso personal disponible) resulta en un promedio de 0.28 unidades de aumento en <span class="math inline">\(Y\)</span>.</li>
+</ul>
+</div></div>
+</section>
+<section id="regresión-lineal-múltiple" class="slide level2">
+<h2>Regresión lineal múltiple</h2>
+<ul>
+<li>La forma general de un modelo de regresión lineal múltiple es:</li>
+</ul>
+<p><span class="math display">\[Y_t=\beta_0+\beta_1 X_{t,1}+\beta_2 X_{t,2}+...+\beta_p X_{t,p}+\epsilon_t, t=1,...,T,\]</span></p>
+<p>donde <span class="math inline">\(Y_t\)</span> es la variable a pronosticar y <span class="math inline">\(X_1,...,X_p\)</span> son los <span class="math inline">\(p\)</span> variables predictoras. Las variables predictoras pueden ser numéricas o categóricas (con el manejo apropiado de factores).<br>
+Los coeficientes <span class="math inline">\(\beta_1,...,\beta_p\)</span> miden el efecto de cada predictor después de tener en cuenta los efectos de todos los demás predictores del modelo. Por lo tanto, los coeficientes miden los efectos marginales de las variables predictoras.</p>
+</section>
+<section class="slide level2">
+
+<ul>
+<li>El modelo de regresión lineal múltiple en su forma matricial:</li>
+</ul>
+<p><span class="math display">\[
+Y=X \beta+\epsilon
+\]</span> donde</p>
+<p><span class="math display">\[Y=\left[ \begin{array}{c}Y_1 \\ \vdots \\Y_T \end{array}  \right],~~ X= \left(\begin{array}{ccccc} 1&amp; X_{11}&amp; X_{12} &amp; ... &amp; X_{1p}\\ 1 &amp;  X_{21}&amp; X_{22} &amp; ... &amp;X_{2p}\\ \vdots&amp; \vdots &amp; \ddots &amp;\vdots&amp; \vdots\\ 1&amp;  X_{T1}&amp; X_{T2} &amp; ... &amp;X_{Tp} \end{array}\right),\]</span> <span class="math display">\[\beta=\left[ \begin{array}{c}\beta_0 \\ \vdots \\\beta_T \end{array}  \right],~~\epsilon=\left[ \begin{array}{c}\epsilon_1 \\ \vdots \\\epsilon_T \end{array}  \right].\]</span></p>
+</section>
+<section class="slide level2">
+
+<p><strong>Supocisiones del modelo:</strong></p>
+<ul>
+<li><p>La relación entre la variable de pronóstico y las variables predictoras satisface esta ecuación lineal.</p></li>
+<li><p>Los errores <span class="math inline">\(\varepsilon_1,...,\varepsilon_T\)</span>:</p>
+<ul>
+<li>tienen media cero,</li>
+<li>no están autocorrelacionados,</li>
+<li>no están relacionados con las variables predictoras</li>
+</ul></li>
+<li><p>Los errores se distribuyan normalmente con una varianza constante <span class="math inline">\(\sigma^2\)</span>.</p></li>
+<li><p>Cada predictor <span class="math inline">\(X_i, i=1,...,p\)</span> supone que es observado y fijo, i.e.&nbsp;no es una variable aleatoria.</p></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<p><strong>Tópicos importantes:</strong></p>
+<ul>
+<li>Estimación:
+<ul>
+<li>Por mínimos cuadrados.</li>
+<li>Por máxima verosimilitud.</li>
+</ul></li>
+<li>Selección de variables</li>
+<li>Diagnósticos</li>
+<li>Medidas remediales</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p><span class="alert">Estimación por mínimos cuadrados:</span> minimizar <span class="math display">\[\sum_{t=1}^T \epsilon_t^2=\sum_{t=1}^T [y_t-(\beta_0+\beta_1 x_{1,t}+...+\beta_k x_{k,t})]^2,\]</span> en función de <span class="math inline">\(\beta_0,...\beta_k\)</span>.</p></li>
+<li><p>Como resultado: <span class="math display">\[\hat{\beta}=(X^\top X)^{-1}X^\top Y.\]</span></p></li>
+<li><p><span class="alert">El estimador de máxima verosimilitud</span> es equivalente.</p></li>
+</ul>
+</section>
+<section id="ejemplo-1" class="slide level2">
+<h2>Ejemplo</h2>
+<ul>
+<li>El objetivo es generar pronósticos del consumo más precisos usando otros predictores, además del ingreso personal.</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href=""></a><span class="fu">autoplot</span>(uschange[,<span class="dv">3</span><span class="sc">:</span><span class="dv">5</span>], <span class="at">facets =</span> <span class="cn">TRUE</span>, <span class="at">colour=</span><span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb10-2"><a href=""></a>  <span class="fu">ylab</span>(<span class="st">""</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Year"</span>) <span class="sc">+</span></span>
+<span id="cb10-3"><a href=""></a>  <span class="fu">guides</span>(<span class="at">colour=</span><span class="st">"none"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="presentacion_files/figure-revealjs/unnamed-chunk-7-1.png" width="384" class="r-stretch quarto-figure-center"><p class="caption">Variaciones porcentuales trimestrales en la producción industrial y ahorros personales y variaciones trimestrales en la tasa de desempleo de los EE. UU. Durante el período 1970T1-2016T3 (Hyndman)</p></section>
+<section class="slide level2">
+
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href=""></a>uschange <span class="sc">%&gt;%</span></span>
+<span id="cb11-2"><a href=""></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb11-3"><a href=""></a>  GGally<span class="sc">::</span><span class="fu">ggpairs</span>()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="presentacion_files/figure-revealjs/unnamed-chunk-8-1.png" width="480" class="r-stretch quarto-figure-center"><p class="caption">Matriz de diagrama de dispersión del gasto de consumo de EE. UU. y los cuatro predictores.</p></section>
+<section class="slide level2">
+
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href=""></a>modreg <span class="ot">&lt;-</span> <span class="fu">tslm</span>(</span>
+<span id="cb12-2"><a href=""></a>  Consumption <span class="sc">~</span> Income <span class="sc">+</span> Production <span class="sc">+</span> Unemployment <span class="sc">+</span> Savings,</span>
+<span id="cb12-3"><a href=""></a>  <span class="at">data=</span>uschange)</span>
+<span id="cb12-4"><a href=""></a><span class="fu">summary</span>(modreg)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+tslm(formula = Consumption ~ Income + Production + Unemployment + 
+    Savings, data = uschange)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.88296 -0.17638 -0.03679  0.15251  1.20553 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)   0.26729    0.03721   7.184 1.68e-11 ***
+Income        0.71449    0.04219  16.934  &lt; 2e-16 ***
+Production    0.04589    0.02588   1.773   0.0778 .  
+Unemployment -0.20477    0.10550  -1.941   0.0538 .  
+Savings      -0.04527    0.00278 -16.287  &lt; 2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.3286 on 182 degrees of freedom
+Multiple R-squared:  0.754, Adjusted R-squared:  0.7486 
+F-statistic: 139.5 on 4 and 182 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href=""></a><span class="fu">autoplot</span>(uschange[,<span class="st">'Consumption'</span>], <span class="at">series=</span><span class="st">"Data"</span>) <span class="sc">+</span></span>
+<span id="cb14-2"><a href=""></a>  forecast<span class="sc">::</span><span class="fu">autolayer</span>(<span class="fu">fitted</span>(modreg), <span class="at">series=</span><span class="st">"Fitted"</span>) <span class="sc">+</span></span>
+<span id="cb14-3"><a href=""></a>  <span class="fu">xlab</span>(<span class="st">"Year"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">""</span>) <span class="sc">+</span></span>
+<span id="cb14-4"><a href=""></a>  <span class="fu">ggtitle</span>(<span class="st">"Cambio porcentual de gastos de consumo en EE.UUU "</span>) <span class="sc">+</span></span>
+<span id="cb14-5"><a href=""></a>  <span class="fu">guides</span>(<span class="at">colour=</span><span class="fu">guide_legend</span>(<span class="at">title=</span><span class="st">" "</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="presentacion_files/figure-revealjs/unnamed-chunk-10-1.png" width="672" class="r-stretch"></section>
+<section class="slide level2">
+
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href=""></a><span class="fu">checkresiduals</span>(modreg)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Breusch-Godfrey test for serial correlation of order up to 8
+
+data:  Residuals from Linear regression model
+LM test = 14.874, df = 8, p-value = 0.06163</code></pre>
+</div>
+</div>
+<img data-src="presentacion_files/figure-revealjs/unnamed-chunk-11-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:50.0%"></section></section>
+<section>
+<section id="regresión-espuria" class="title-slide slide level1 agenda-slide center">
+<h1>Regresión espuria</h1>
+<div class="agenda-heading">
+<p>Contenido</p>
+</div>
+<div class="agenda">
+<ol>
+<li><div class="agenda-inactive agenda-pre-active">
+<p>Introducción</p>
+</div></li>
+<li><div class="agenda-inactive agenda-pre-active">
+<p>Modelos de regresión</p>
+</div></li>
+<li><div class="agenda-active">
+<p>Regresión espuria</p>
+</div></li>
+<li><div class="agenda-inactive agenda-post-active">
+<p>El tiempo como covariables</p>
+</div></li>
+<li><div class="agenda-inactive agenda-post-active">
+<p>Pronósticos usando regresión</p>
+</div></li>
+<li><div class="agenda-inactive agenda-post-active">
+<p>Extensiones de modelos de regresión</p>
+</div></li>
+</ol>
+</div>
+</section>
+<section id="regresión-espuria-1" class="slide level2">
+<h2>Regresión espuria</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<ul>
+<li>Cuando las series no son estacionarias<sup>1</sup>, los resultados de regresión no son confiables y presenta lo que se llama <span class="alert">correlación espuria</span>.</li>
+</ul>
+<ul>
+<li><p>Los datos de las series cronológicas de tendencias pueden parecer relacionados.</p></li>
+<li><p>Por ejemplo, los pasajeros aéreos en Australia tienen una correlación positiva con la producción de arroz en Guinea.</p></li>
+</ul>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-12-1.png" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+<aside><ol class="aside-footnotes"><li id="fn1"><p>Estacionariedad es un concepto que veremos en el siguiente tema y significa que la serie varíe con una tendencia constante y variación constante, pero con cierta estructura de autocorrelación.</p></li></ol></aside></section>
+<section class="slide level2">
+
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href=""></a>fit <span class="ot">&lt;-</span> <span class="fu">tslm</span>(aussies <span class="sc">~</span> guinearice)</span>
+<span id="cb17-2"><a href=""></a><span class="fu">summary</span>(fit)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+tslm(formula = aussies ~ guinearice)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-5.9448 -1.8917 -0.3272  1.8620 10.4210 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)   -7.493      1.203  -6.229 2.25e-07 ***
+guinearice    40.288      1.337  30.135  &lt; 2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 3.239 on 40 degrees of freedom
+Multiple R-squared:  0.9578,    Adjusted R-squared:  0.9568 
+F-statistic: 908.1 on 1 and 40 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href=""></a><span class="fu">checkresiduals</span>(fit)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-14-1.png" width="384"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Breusch-Godfrey test for serial correlation of order up to 8
+
+data:  Residuals from Linear regression model
+LM test = 28.813, df = 8, p-value = 0.000342</code></pre>
+</div>
+</div>
+</div></div>
+</section></section>
+<section>
+<section id="el-tiempo-como-covariables" class="title-slide slide level1 agenda-slide center">
+<h1>El tiempo como covariables</h1>
+<div class="agenda-heading">
+<p>Contenido</p>
+</div>
+<div class="agenda">
+<ol>
+<li><div class="agenda-inactive agenda-pre-active">
+<p>Introducción</p>
+</div></li>
+<li><div class="agenda-inactive agenda-pre-active">
+<p>Modelos de regresión</p>
+</div></li>
+<li><div class="agenda-inactive agenda-pre-active">
+<p>Regresión espuria</p>
+</div></li>
+<li><div class="agenda-active">
+<p>El tiempo como covariables</p>
+</div></li>
+<li><div class="agenda-inactive agenda-post-active">
+<p>Pronósticos usando regresión</p>
+</div></li>
+<li><div class="agenda-inactive agenda-post-active">
+<p>Extensiones de modelos de regresión</p>
+</div></li>
+</ol>
+</div>
+</section>
+<section id="el-tiempo-como-covariables-1" class="slide level2">
+<h2>El tiempo como covariables</h2>
+<p>El tiempo también sirve como variable predictora:</p>
+<ul>
+<li>Modelos de tendencia (lineales o no lineales)</li>
+<li>Modelos estacionalidad (variables indicadoras)</li>
+</ul>
+<p>Veremos más adelante en regresión dinámica:</p>
+<ul>
+<li>Análisis de intervención.</li>
+<li>Estrategias para valores extremos.</li>
+</ul>
+</section>
+<section id="modelos-de-tendencia" class="slide level2">
+<h2>Modelos de tendencia</h2>
+<ul>
+<li><p>Como las variables independiente son asumidas como fijas, se puede utilizar el tiempo como una variable independiente.</p></li>
+<li><p>Los modelos más frecuentes:</p>
+<ul>
+<li><span class="alert">Tendencia lineal</span>: <span class="math display">\[Y_t=\beta_0+\beta_1 t + \epsilon_t\]</span></li>
+<li><span class="alert">Tendencia cuadrática</span>: <span class="math display">\[Y_t=\beta_0+\beta_1 t +\beta_2 t^2 + \epsilon_t\]</span></li>
+</ul></li>
+<li><p>Regresión no lineal.</p>
+<ul>
+<li>Por ejemplo: LOESS.</li>
+</ul></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<p>Vamos a ajustar un modelo de tendencia cuadrática a la serie de graduados de ITCR de 1975 a 2002: <span class="math display">\[Y_t=\beta_0+\beta_1 t +\beta_2 t^2 + \epsilon_t, t=1,...,T\]</span></p>
+<div class="cell columns column-output-location">
+<div class="column">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href=""></a>itcrgrad<span class="ot">&lt;-</span><span class="fu">read.csv</span>(<span class="st">"ITCR.csv"</span>,<span class="at">sep=</span><span class="st">","</span>)</span>
+<span id="cb21-2"><a href=""></a>y<span class="ot">&lt;-</span><span class="fu">ts</span>(itcrgrad<span class="sc">$</span>graduados,<span class="at">start=</span><span class="dv">1975</span>)</span>
+<span id="cb21-3"><a href=""></a>tiempo<span class="ot">&lt;-</span><span class="fu">seq</span>(<span class="dv">1</span>,<span class="fu">length</span>(y))</span>
+<span id="cb21-4"><a href=""></a>tiempo2<span class="ot">&lt;-</span>tiempo<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb21-5"><a href=""></a>mod<span class="ot">&lt;-</span><span class="fu">lm</span>(y<span class="sc">~</span>tiempo<span class="sc">+</span>tiempo2)</span>
+<span id="cb21-6"><a href=""></a></span>
+<span id="cb21-7"><a href=""></a><span class="fu">autoplot</span>(y) <span class="sc">+</span></span>
+<span id="cb21-8"><a href=""></a>  <span class="fu">ylab</span>(<span class="st">"ITCR"</span>) <span class="sc">+</span></span>
+<span id="cb21-9"><a href=""></a>  <span class="fu">autolayer</span>(<span class="fu">ts</span>(mod<span class="sc">$</span>fitted.values,<span class="at">start=</span><span class="dv">1975</span>), <span class="at">series =</span> <span class="st">"ajustado"</span>) </span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-15-1.png" width="576"></p>
+</figure>
+</div>
+</div>
+</div></div>
+</section>
+<section class="slide level2">
+
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href=""></a><span class="fu">summary</span>(mod)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = y ~ tiempo + tiempo2)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-117.932  -49.683    4.506   43.234  155.390 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 127.0021    43.6818   2.907  0.00753 ** 
+tiempo      -12.7887     6.9427  -1.842  0.07736 .  
+tiempo2       1.5612     0.2323   6.720 4.83e-07 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 71.61 on 25 degrees of freedom
+Multiple R-squared:  0.944, Adjusted R-squared:  0.9395 
+F-statistic: 210.6 on 2 and 25 DF,  p-value: 2.268e-16</code></pre>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<div class="columns">
+<div class="column" style="width:50%;">
+<ul>
+<li>Supuestos:
+<ul>
+<li>Normalidad</li>
+<li>Homoscedasticidad</li>
+<li>Autocorrelación en el tiempo</li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href=""></a><span class="fu">hist</span>(mod<span class="sc">$</span>residuals,<span class="at">main=</span><span class="st">""</span>,<span class="at">xlab=</span><span class="st">"residuales"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-17-1.png" width="384"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href=""></a>car<span class="sc">::</span><span class="fu">qqPlot</span>(mod<span class="sc">$</span>residuals,<span class="at">ylab=</span><span class="st">"residuales"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-18-1.png" width="384"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  8 21</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href=""></a><span class="fu">shapiro.test</span>(mod<span class="sc">$</span>residuals)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Shapiro-Wilk normality test
+
+data:  mod$residuals
+W = 0.97509, p-value = 0.7211</code></pre>
+</div>
+</div>
+</div></div>
+</section>
+<section class="slide level2">
+
+<ul>
+<li>Los residuales en el tiempo:</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href=""></a><span class="fu">ts.plot</span>(mod<span class="sc">$</span>residuals,<span class="at">ylab=</span><span class="st">"residuales"</span>) </span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="presentacion_files/figure-revealjs/unnamed-chunk-20-1.png" width="384" class="r-stretch"></section>
+<section class="slide level2">
+
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href=""></a><span class="fu">checkresiduals</span>(mod)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Breusch-Godfrey test for serial correlation of order up to 6
+
+data:  Residuals
+LM test = 3.9215, df = 6, p-value = 0.6873</code></pre>
+</div>
+</div>
+<img data-src="presentacion_files/figure-revealjs/unnamed-chunk-21-1.png" width="384" class="r-stretch"></section>
+<section id="transformación-en-modelos-estacionales" class="slide level2">
+<h2>Transformación en modelos estacionales</h2>
+<ul>
+<li>Si la magnitud del cambio estacional se mantiene aproximadamente constante con el cambio del nivel de la serie, se dice que la variación estacional es constante (aditiva).</li>
+<li>Si la variación estacional aumenta proporcionalmente con el nivel de la serie, se dice que la variación estacional es multiplicativa.</li>
+</ul>
+<p>Transformaciones usadas en la práctica:</p>
+<ul>
+<li><p><span class="math inline">\(W_t=Y_t^\alpha,~~\text{con} -1&lt;\alpha&lt;1\)</span></p></li>
+<li><p><span class="math inline">\(W_t=\ln Y_t\)</span></p></li>
+</ul>
+</section>
+<section id="ejemplo-de-turistas" class="slide level2">
+<h2>Ejemplo de turistas</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href=""></a>turistas<span class="ot">&lt;-</span><span class="fu">read.csv</span>(<span class="st">"turistas.csv"</span>,<span class="at">sep=</span><span class="st">";"</span>)</span>
+<span id="cb32-2"><a href=""></a>y<span class="ot">&lt;-</span><span class="fu">ts</span>(turistas<span class="sc">$</span>turistas,<span class="at">start=</span><span class="fu">c</span>(<span class="dv">1991</span>,<span class="dv">1</span>),<span class="at">frequency=</span><span class="dv">12</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>Sin transformación <span class="math inline">\((Y_t)\)</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href=""></a><span class="fu">autoplot</span>(y) </span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-23-1.png" width="384"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<p>Con transformación <span class="math inline">\((\ln Y_t)\)</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href=""></a><span class="fu">autoplot</span>(<span class="fu">log</span>(y))  </span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-24-1.png" width="384"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="modelos-de-series-estacionales-mediante-variables-indicadoras" class="slide level2">
+<h2>Modelos de series estacionales mediante variables indicadoras</h2>
+<ul>
+<li>La idea es utilizar un factor (variables indicadoras) como predictor para indicar el periodo de la estacionalidad.<br>
+</li>
+<li>Ejemplo de turistas (datos mensuales y con tendencia cuadrática)</li>
+</ul>
+<p><span class="math display">\[ln Y_t=\alpha_0+\alpha_1 t + \alpha_2 t^2 +\beta_1 I_{1}+...+\beta_11 I_{11}+\epsilon_t\]</span></p>
+<div class="cell columns column-output-location">
+<div class="column">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href=""></a>w<span class="ot">&lt;-</span><span class="fu">log</span>(y)</span>
+<span id="cb35-2"><a href=""></a>tiempo<span class="ot">&lt;-</span><span class="fu">seq</span>(<span class="dv">1</span>,<span class="fu">length</span>(y))</span>
+<span id="cb35-3"><a href=""></a>tiempo2<span class="ot">&lt;-</span>tiempo<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb35-4"><a href=""></a>mes<span class="ot">&lt;-</span><span class="fu">rep</span>(<span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">12</span>),<span class="dv">10</span>)</span>
+<span id="cb35-5"><a href=""></a>mes<span class="ot">&lt;-</span><span class="fu">as.factor</span>(mes)</span>
+<span id="cb35-6"><a href=""></a></span>
+<span id="cb35-7"><a href=""></a>datos1<span class="ot">&lt;-</span><span class="fu">data.frame</span>(w,tiempo,tiempo2,mes)</span>
+<span id="cb35-8"><a href=""></a><span class="fu">head</span>(datos1)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column">
+<div class="cell-output cell-output-stdout">
+<pre><code>         w tiempo tiempo2 mes
+1 10.76223      1       1   1
+2 10.72731      2       4   2
+3 10.78324      3       9   3
+4 10.50832      4      16   4
+5 10.36113      5      25   5
+6 10.51486      6      36   6</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href=""></a><span class="fu">tail</span>(datos1)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           w tiempo tiempo2 mes
+115 11.42852    115   13225   7
+116 11.26863    116   13456   8
+117 11.08610    117   13689   9
+118 11.13942    118   13924  10
+119 11.45100    119   14161  11
+120 11.68831    120   14400  12</code></pre>
+</div>
+</div></div>
+</section>
+<section class="slide level2">
+
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href=""></a>mod<span class="ot">&lt;-</span><span class="fu">lm</span>(w<span class="sc">~</span>tiempo<span class="sc">+</span>tiempo2<span class="sc">+</span>mes,datos1)</span>
+<span id="cb39-2"><a href=""></a><span class="fu">round</span>(<span class="fu">summary</span>(mod)<span class="sc">$</span>coefficients,<span class="dv">4</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            Estimate Std. Error  t value Pr(&gt;|t|)
+(Intercept)  10.9420     0.0294 372.1819   0.0000
+tiempo        0.0086     0.0008  11.1807   0.0000
+tiempo2       0.0000     0.0000  -3.2291   0.0017
+mes2         -0.1013     0.0324  -3.1246   0.0023
+mes3         -0.1181     0.0324  -3.6408   0.0004
+mes4         -0.3467     0.0324 -10.6900   0.0000
+mes5         -0.5050     0.0324 -15.5680   0.0000
+mes6         -0.4243     0.0324 -13.0771   0.0000
+mes7         -0.2037     0.0325  -6.2784   0.0000
+mes8         -0.3326     0.0325 -10.2482   0.0000
+mes9         -0.6091     0.0325 -18.7601   0.0000
+mes10        -0.5293     0.0325 -16.2990   0.0000
+mes11        -0.3263     0.0325 -10.0431   0.0000
+mes12        -0.1042     0.0325  -3.2068   0.0018</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href=""></a>mod2<span class="ot">&lt;-</span><span class="fu">tslm</span>(w<span class="sc">~</span>trend<span class="sc">+</span><span class="fu">I</span>(trend<span class="sc">^</span><span class="dv">2</span>)<span class="sc">+</span>season,datos1)</span>
+<span id="cb41-2"><a href=""></a><span class="fu">round</span>(<span class="fu">summary</span>(mod2)<span class="sc">$</span>coefficients,<span class="dv">4</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            Estimate Std. Error  t value Pr(&gt;|t|)
+(Intercept)  10.9420     0.0294 372.1819   0.0000
+trend         0.0086     0.0008  11.1807   0.0000
+I(trend^2)    0.0000     0.0000  -3.2291   0.0017
+season2      -0.1013     0.0324  -3.1246   0.0023
+season3      -0.1181     0.0324  -3.6408   0.0004
+season4      -0.3467     0.0324 -10.6900   0.0000
+season5      -0.5050     0.0324 -15.5680   0.0000
+season6      -0.4243     0.0324 -13.0771   0.0000
+season7      -0.2037     0.0325  -6.2784   0.0000
+season8      -0.3326     0.0325 -10.2482   0.0000
+season9      -0.6091     0.0325 -18.7601   0.0000
+season10     -0.5293     0.0325 -16.2990   0.0000
+season11     -0.3263     0.0325 -10.0431   0.0000
+season12     -0.1042     0.0325  -3.2068   0.0018</code></pre>
+</div>
+</div>
+</div></div>
+</section>
+<section class="slide level2">
+
+<ul>
+<li>Pronóstico de <span class="math inline">\(W_t = log (Y_t)\)</span>.</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href=""></a>pronostico<span class="ot">&lt;-</span><span class="fu">forecast</span>(mod2,<span class="at">h=</span><span class="dv">12</span>)</span>
+<span id="cb43-2"><a href=""></a></span>
+<span id="cb43-3"><a href=""></a><span class="fu">autoplot</span>(w) <span class="sc">+</span></span>
+<span id="cb43-4"><a href=""></a>  <span class="fu">ylab</span>(<span class="st">"log(turistas)"</span>) <span class="sc">+</span></span>
+<span id="cb43-5"><a href=""></a>  <span class="fu">autolayer</span>(mod2<span class="sc">$</span>fitted.values, <span class="at">series =</span> <span class="st">"ajustado"</span>) <span class="sc">+</span></span>
+<span id="cb43-6"><a href=""></a>  <span class="fu">autolayer</span>(pronostico, <span class="at">series =</span> <span class="st">"pronostico"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="presentacion_files/figure-revealjs/unnamed-chunk-28-1.png" width="480" class="r-stretch"></section>
+<section class="slide level2">
+
+<ul>
+<li>La ventaja de <code>tslm</code> es que se puede especificar la transformación con el argumen <code>lambda</code>.</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href=""></a>mod3<span class="ot">&lt;-</span><span class="fu">tslm</span>(y<span class="sc">~</span>trend<span class="sc">+</span><span class="fu">I</span>(trend<span class="sc">^</span><span class="dv">2</span>)<span class="sc">+</span>season, <span class="at">lambda =</span> <span class="dv">0</span>)</span>
+<span id="cb44-2"><a href=""></a><span class="fu">summary</span>(mod3)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+tslm(formula = y ~ trend + I(trend^2) + season, lambda = 0)
+
+Residuals:
+      Min        1Q    Median        3Q       Max 
+-0.188378 -0.048245  0.007514  0.052592  0.135323 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  1.094e+01  2.940e-02 372.182  &lt; 2e-16 ***
+trend        8.617e-03  7.707e-04  11.181  &lt; 2e-16 ***
+I(trend^2)  -1.992e-05  6.169e-06  -3.229 0.001654 ** 
+season2     -1.013e-01  3.243e-02  -3.125 0.002297 ** 
+season3     -1.181e-01  3.243e-02  -3.641 0.000422 ***
+season4     -3.467e-01  3.243e-02 -10.690  &lt; 2e-16 ***
+season5     -5.050e-01  3.244e-02 -15.568  &lt; 2e-16 ***
+season6     -4.243e-01  3.244e-02 -13.077  &lt; 2e-16 ***
+season7     -2.037e-01  3.245e-02  -6.278 7.65e-09 ***
+season8     -3.326e-01  3.246e-02 -10.248  &lt; 2e-16 ***
+season9     -6.091e-01  3.247e-02 -18.760  &lt; 2e-16 ***
+season10    -5.293e-01  3.248e-02 -16.299  &lt; 2e-16 ***
+season11    -3.263e-01  3.249e-02 -10.043  &lt; 2e-16 ***
+season12    -1.042e-01  3.250e-02  -3.207 0.001775 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.07251 on 106 degrees of freedom
+Multiple R-squared:  0.9439,    Adjusted R-squared:  0.937 
+F-statistic: 137.3 on 13 and 106 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+</section></section>
+<section>
+<section id="pronósticos-usando-regresión" class="title-slide slide level1 agenda-slide center">
+<h1>Pronósticos usando regresión</h1>
+<div class="agenda-heading">
+<p>Contenido</p>
+</div>
+<div class="agenda">
+<ol>
+<li><div class="agenda-inactive agenda-pre-active">
+<p>Introducción</p>
+</div></li>
+<li><div class="agenda-inactive agenda-pre-active">
+<p>Modelos de regresión</p>
+</div></li>
+<li><div class="agenda-inactive agenda-pre-active">
+<p>Regresión espuria</p>
+</div></li>
+<li><div class="agenda-inactive agenda-pre-active">
+<p>El tiempo como covariables</p>
+</div></li>
+<li><div class="agenda-active">
+<p>Pronósticos usando regresión</p>
+</div></li>
+<li><div class="agenda-inactive agenda-post-active">
+<p>Extensiones de modelos de regresión</p>
+</div></li>
+</ol>
+</div>
+</section>
+<section id="pronósticos-usando-regresión-1" class="slide level2">
+<h2>Pronósticos usando regresión</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href=""></a>y<span class="ot">&lt;-</span><span class="fu">ts</span>(turistas<span class="sc">$</span>turistas,<span class="at">start=</span><span class="fu">c</span>(<span class="dv">1991</span>,<span class="dv">1</span>),<span class="at">frequency=</span><span class="dv">12</span>)</span>
+<span id="cb46-2"><a href=""></a>y.train<span class="ot">&lt;-</span><span class="fu">window</span>(y,<span class="at">start=</span><span class="fu">c</span>(<span class="dv">1991</span>,<span class="dv">1</span>),<span class="at">end=</span><span class="fu">c</span>(<span class="dv">1999</span>,<span class="dv">12</span>))</span>
+<span id="cb46-3"><a href=""></a>y.test<span class="ot">&lt;-</span><span class="fu">window</span>(y,<span class="at">start=</span><span class="fu">c</span>(<span class="dv">2000</span>,<span class="dv">1</span>),<span class="at">end=</span><span class="fu">c</span>(<span class="dv">2000</span>,<span class="dv">12</span>))</span>
+<span id="cb46-4"><a href=""></a></span>
+<span id="cb46-5"><a href=""></a>mod4<span class="ot">&lt;-</span><span class="fu">tslm</span>(y.train<span class="sc">~</span>trend<span class="sc">+</span><span class="fu">I</span>(trend<span class="sc">^</span><span class="dv">2</span>)<span class="sc">+</span>season, <span class="at">lambda =</span> <span class="dv">0</span>)</span>
+<span id="cb46-6"><a href=""></a><span class="fu">summary</span>(mod4)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+tslm(formula = y.train ~ trend + I(trend^2) + season, lambda = 0)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.17475 -0.04751  0.00836  0.04812  0.13057 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  1.093e+01  3.104e-02 352.036  &lt; 2e-16 ***
+trend        9.663e-03  9.059e-04  10.667  &lt; 2e-16 ***
+I(trend^2)  -3.135e-05  8.048e-06  -3.895 0.000184 ***
+season2     -1.023e-01  3.427e-02  -2.986 0.003605 ** 
+season3     -1.221e-01  3.427e-02  -3.561 0.000581 ***
+season4     -3.528e-01  3.428e-02 -10.291  &lt; 2e-16 ***
+season5     -5.110e-01  3.428e-02 -14.905  &lt; 2e-16 ***
+season6     -4.229e-01  3.429e-02 -12.335  &lt; 2e-16 ***
+season7     -1.969e-01  3.430e-02  -5.741 1.15e-07 ***
+season8     -3.217e-01  3.431e-02  -9.376 3.89e-15 ***
+season9     -6.078e-01  3.432e-02 -17.713  &lt; 2e-16 ***
+season10    -5.245e-01  3.433e-02 -15.277  &lt; 2e-16 ***
+season11    -3.327e-01  3.434e-02  -9.688 8.44e-16 ***
+season12    -1.116e-01  3.436e-02  -3.249 0.001606 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.0727 on 94 degrees of freedom
+Multiple R-squared:  0.9382,    Adjusted R-squared:  0.9296 
+F-statistic: 109.7 on 13 and 94 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href=""></a>pronostico<span class="ot">&lt;-</span><span class="fu">forecast</span>(mod4,<span class="at">h=</span><span class="dv">12</span>)</span>
+<span id="cb48-2"><a href=""></a>pronostico</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         Point Forecast    Lo 80     Hi 80    Lo 95     Hi 95
+Jan 2000      109989.74 99272.84 121863.56 93941.82 128779.09
+Feb 2000       99569.71 89844.97 110347.04 85008.45 116625.19
+Mar 2000       97891.63 88306.78 108516.81 83540.84 114707.61
+Apr 2000       77932.30 70281.62  86415.81 66478.26  91359.84
+May 2000       66701.49 60135.29  73984.66 56871.81  78230.13
+Jun 2000       73026.02 65816.53  81025.24 62234.20  85689.22
+Jul 2000       91775.62 82687.92 101862.10 78173.48 107744.53
+Aug 2000       81205.70 73139.61  90161.35 69133.73  95385.65
+Sep 2000       61139.77 55047.22  67906.64 52022.30  71855.18
+Oct 2000       66609.59 59949.83  74009.18 56644.23  78328.14
+Nov 2000       80866.86 72753.77  89884.68 68728.01  95149.70
+Dec 2000      101095.83 90917.22 112413.98 85868.09 119024.03</code></pre>
+</div>
+</div>
+</div></div>
+</section>
+<section class="slide level2">
+
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href=""></a><span class="fu">autoplot</span>(y) <span class="sc">+</span></span>
+<span id="cb50-2"><a href=""></a>  <span class="fu">ylab</span>(<span class="st">"turistas"</span>) <span class="sc">+</span></span>
+<span id="cb50-3"><a href=""></a>  <span class="fu">autolayer</span>(mod4<span class="sc">$</span>fitted.values, <span class="at">series =</span> <span class="st">"ajustado"</span>) <span class="sc">+</span></span>
+<span id="cb50-4"><a href=""></a>  <span class="fu">autolayer</span>(pronostico, <span class="at">series =</span> <span class="st">"pronostico"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="presentacion_files/figure-revealjs/unnamed-chunk-32-1.png" width="672" class="r-stretch"><div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href=""></a><span class="fu">accuracy</span>(pronostico,y.test)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                    ME     RMSE      MAE        MPE     MAPE      MASE
+Training set  158.0941 4400.077 3520.199 -0.2325897 5.582558 0.5706985
+Test set     6689.2284 8676.254 7169.179  7.0049171 7.617677 1.1622750
+                  ACF1 Theil's U
+Training set 0.6648405        NA
+Test set     0.4736527 0.5590507</code></pre>
+</div>
+</div>
+</section></section>
+<section>
+<section id="extensiones-de-modelos-de-regresión" class="title-slide slide level1 agenda-slide center">
+<h1>Extensiones de modelos de regresión</h1>
+<div class="agenda-heading">
+<p>Contenido</p>
+</div>
+<div class="agenda">
+<ol>
+<li><div class="agenda-inactive agenda-pre-active">
+<p>Introducción</p>
+</div></li>
+<li><div class="agenda-inactive agenda-pre-active">
+<p>Modelos de regresión</p>
+</div></li>
+<li><div class="agenda-inactive agenda-pre-active">
+<p>Regresión espuria</p>
+</div></li>
+<li><div class="agenda-inactive agenda-pre-active">
+<p>El tiempo como covariables</p>
+</div></li>
+<li><div class="agenda-inactive agenda-pre-active">
+<p>Pronósticos usando regresión</p>
+</div></li>
+<li><div class="agenda-active">
+<p>Extensiones de modelos de regresión</p>
+</div></li>
+</ol>
+</div>
+</section>
+<section id="extensiones-de-modelos-de-regresión-1" class="slide level2">
+<h2>Extensiones de modelos de regresión</h2>
+<ul>
+<li><p>Modelos no lineales.</p></li>
+<li><p>Modelos lineales generalizados (GLM).</p>
+<ul>
+<li>Variables dependientes que pertenecen a una familia exponencial: Poisson, Exponencial, etc.</li>
+</ul></li>
+<li><p>Modelos aditivos generalizados (GAM).</p>
+<ul>
+<li>Efectos fijos y aleatorios.</li>
+</ul></li>
+<li><p>Modelos aditivos generalizados para locación, escala y forma (GAMLSS).</p></li>
+</ul>
+</section>
+<section id="ejemplo-2" class="slide level2">
+<h2>Ejemplo</h2>
+<h3 id="temperatura-diaria-f-en-cairo-de-01-01-1995-hasta-21-05-2005">Temperatura diaria (F) en Cairo de 01-01-1995 hasta 21-05-2005</h3>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href=""></a><span class="fu">data</span>(cairo)</span>
+<span id="cb53-2"><a href=""></a><span class="fu">plot</span>(cairo<span class="sc">$</span>temp<span class="sc">~</span>cairo<span class="sc">$</span>time,<span class="at">type=</span><span class="st">"l"</span>, <span class="at">ylab=</span><span class="st">"temp"</span>,<span class="at">xlab=</span><span class="st">"time"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-34-1.png" width="384"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<ul>
+<li><p>La estacionalidad es de 365 o 366 días.</p></li>
+<li><p>Muy costoso crear tantas variables indicadoras.</p></li>
+</ul>
+</div></div>
+</section>
+<section class="slide level2">
+
+<ul>
+<li>Ajuste de un GAM</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href=""></a>ctamm <span class="ot">&lt;-</span> <span class="fu">gamm</span>(temp<span class="sc">~</span><span class="fu">s</span>(day.of.year,<span class="at">bs=</span><span class="st">"cc"</span>,<span class="at">k=</span><span class="dv">20</span>)<span class="sc">+</span><span class="fu">s</span>(time,<span class="at">bs=</span><span class="st">"cr"</span>),</span>
+<span id="cb54-2"><a href=""></a>              <span class="at">data=</span>cairo,<span class="at">correlation=</span><span class="fu">corAR1</span>(<span class="at">form=</span><span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>year))</span>
+<span id="cb54-3"><a href=""></a>pred<span class="ot">&lt;-</span><span class="fu">fitted</span>(ctamm<span class="sc">$</span>gam)</span>
+<span id="cb54-4"><a href=""></a><span class="fu">plot</span>(cairo<span class="sc">$</span>temp<span class="sc">~</span>cairo<span class="sc">$</span>time,<span class="at">type=</span><span class="st">"l"</span>, <span class="at">ylab=</span><span class="st">"temp"</span>,<span class="at">xlab=</span><span class="st">"time"</span>)</span>
+<span id="cb54-5"><a href=""></a><span class="fu">points</span>(cairo<span class="sc">$</span>time,pred,<span class="at">type=</span><span class="st">"l"</span>,<span class="at">col=</span><span class="dv">2</span>,<span class="at">lwd=</span><span class="dv">2</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="presentacion_files/figure-revealjs/unnamed-chunk-35-1.png" width="480" class="r-stretch"></section>
+<section class="slide level2">
+
+<div class="columns">
+<div class="column" style="width:50%;">
+<ul>
+<li>Periodograma (análisis espectral)</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href=""></a><span class="fu">library</span>(astsa)</span>
+<span id="cb55-2"><a href=""></a>x<span class="ot">&lt;-</span>cairo<span class="sc">$</span>temp</span>
+<span id="cb55-3"><a href=""></a>x.spec <span class="ot">&lt;-</span><span class="fu">mvspec</span>(x,<span class="at">log=</span><span class="st">"no"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-36-1.png" width="384"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href=""></a><span class="fu">plot</span>(x.spec)</span>
+<span id="cb56-2"><a href=""></a>frecuencia<span class="ot">&lt;-</span>x.spec<span class="sc">$</span>freq[x.spec<span class="sc">$</span>spec<span class="sc">==</span><span class="fu">max</span>(x.spec<span class="sc">$</span>spec)]</span>
+<span id="cb56-3"><a href=""></a><span class="fu">abline</span>(<span class="at">v=</span>frecuencia,<span class="at">col=</span><span class="dv">2</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-37-1.png" width="384"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href=""></a><span class="dv">1</span><span class="sc">/</span>frecuencia</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 349.0909</code></pre>
+</div>
+</div>
+</div></div>
+<p>La frecuencia dominante <span class="math inline">\(\omega\)</span> es 0.002864583, es decir, se completa un ciclo aproximadamente cada 349.09 días.</p>
+</section>
+<section class="slide level2">
+
+<ul>
+<li>Modelo de regresión lineal con covariables senos y cosenos <span class="math display">\[y_t=\alpha+\beta_1 cos(2 \pi \omega t)+\beta_2 sen(2 \pi \omega t)+\varepsilon_t\]</span></li>
+</ul>
+<div class="cell columns column-output-location">
+<div class="column">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href=""></a>cos1<span class="ot">&lt;-</span><span class="fu">cos</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>frecuencia<span class="sc">*</span>cairo<span class="sc">$</span>time)</span>
+<span id="cb59-2"><a href=""></a>sin1<span class="ot">&lt;-</span><span class="fu">sin</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>frecuencia<span class="sc">*</span>cairo<span class="sc">$</span>time)</span>
+<span id="cb59-3"><a href=""></a>data<span class="ot">=</span><span class="fu">data.frame</span>(<span class="at">x=</span>x,<span class="at">time=</span>cairo<span class="sc">$</span>time,<span class="at">cos=</span>cos1,<span class="at">sen=</span>sin1)</span>
+<span id="cb59-4"><a href=""></a>mod<span class="ot">&lt;-</span><span class="fu">lm</span>(x<span class="sc">~</span>cos1<span class="sc">+</span>sin1,<span class="at">data=</span>data)</span>
+<span id="cb59-5"><a href=""></a><span class="fu">plot</span>(cairo<span class="sc">$</span>temp<span class="sc">~</span>cairo<span class="sc">$</span>time,<span class="at">type=</span><span class="st">"l"</span>, <span class="at">ylab=</span><span class="st">"temp"</span>,<span class="at">xlab=</span><span class="st">"time"</span>)</span>
+<span id="cb59-6"><a href=""></a><span class="fu">points</span>(cairo<span class="sc">$</span>time,<span class="fu">fitted</span>(mod),<span class="at">type=</span><span class="st">"l"</span>,<span class="at">col=</span><span class="dv">2</span>,<span class="at">lwd=</span><span class="dv">2</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-38-1.png" width="384"></p>
+</figure>
+</div>
+</div>
+</div></div>
+</section>
+<section class="slide level2">
+
+<ul>
+<li>Modelo de regresión lineal con covariables senos y cosenos con 5 frecuencias más importantes:</li>
+</ul>
+<p><span class="math display">\[y_t=\alpha+ \sum_{k=1}^{5} \left[ \beta_{1k} cos(2 \pi \omega_k t)+\beta_{2k} sen(2 \pi \omega_k t) \right]+\varepsilon_t\]</span></p>
+<ul>
+<li>Las 8 frecuencias más importantes:</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href=""></a>spectro_orden <span class="ot">&lt;-</span> x.spec<span class="sc">$</span>details <span class="sc">%&gt;%</span> <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(spectrum))</span>
+<span id="cb60-2"><a href=""></a>spectro_orden[<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>,]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  frequency   period  spectrum
+1    0.0029 349.0909 91251.731
+2    0.0026 384.0000 54420.640
+3    0.0023 426.6667  8986.496
+4    0.0031 320.0000  6148.723
+5    0.0034 295.3846  2902.172
+6    0.0021 480.0000  2409.255
+7    0.0018 548.5714  1666.177
+8    0.0039 256.0000  1331.423</code></pre>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<div class="cell columns column-output-location">
+<div class="column">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href=""></a>frecuencia1 <span class="ot">&lt;-</span> spectro_orden<span class="sc">$</span>frequency[<span class="dv">1</span>] </span>
+<span id="cb62-2"><a href=""></a>frecuencia2 <span class="ot">&lt;-</span> spectro_orden<span class="sc">$</span>frequency[<span class="dv">2</span>]</span>
+<span id="cb62-3"><a href=""></a>frecuencia3 <span class="ot">&lt;-</span> spectro_orden<span class="sc">$</span>frequency[<span class="dv">3</span>]</span>
+<span id="cb62-4"><a href=""></a>frecuencia4 <span class="ot">&lt;-</span> spectro_orden<span class="sc">$</span>frequency[<span class="dv">4</span>]</span>
+<span id="cb62-5"><a href=""></a>frecuencia5 <span class="ot">&lt;-</span> spectro_orden<span class="sc">$</span>frequency[<span class="dv">5</span>]</span>
+<span id="cb62-6"><a href=""></a>cos1<span class="ot">&lt;-</span><span class="fu">cos</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>frecuencia1<span class="sc">*</span>cairo<span class="sc">$</span>time)</span>
+<span id="cb62-7"><a href=""></a>sin1<span class="ot">&lt;-</span><span class="fu">sin</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>frecuencia1<span class="sc">*</span>cairo<span class="sc">$</span>time)</span>
+<span id="cb62-8"><a href=""></a>cos2<span class="ot">&lt;-</span><span class="fu">cos</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>frecuencia2<span class="sc">*</span>cairo<span class="sc">$</span>time)</span>
+<span id="cb62-9"><a href=""></a>sin2<span class="ot">&lt;-</span><span class="fu">sin</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>frecuencia2<span class="sc">*</span>cairo<span class="sc">$</span>time)</span>
+<span id="cb62-10"><a href=""></a>cos3<span class="ot">&lt;-</span><span class="fu">cos</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>frecuencia3<span class="sc">*</span>cairo<span class="sc">$</span>time)</span>
+<span id="cb62-11"><a href=""></a>sin3<span class="ot">&lt;-</span><span class="fu">sin</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>frecuencia3<span class="sc">*</span>cairo<span class="sc">$</span>time)</span>
+<span id="cb62-12"><a href=""></a>cos4<span class="ot">&lt;-</span><span class="fu">cos</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>frecuencia4<span class="sc">*</span>cairo<span class="sc">$</span>time)</span>
+<span id="cb62-13"><a href=""></a>sin4<span class="ot">&lt;-</span><span class="fu">sin</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>frecuencia4<span class="sc">*</span>cairo<span class="sc">$</span>time)</span>
+<span id="cb62-14"><a href=""></a>cos5<span class="ot">&lt;-</span><span class="fu">cos</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>frecuencia5<span class="sc">*</span>cairo<span class="sc">$</span>time)</span>
+<span id="cb62-15"><a href=""></a>sin5<span class="ot">&lt;-</span><span class="fu">sin</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>frecuencia5<span class="sc">*</span>cairo<span class="sc">$</span>time)</span>
+<span id="cb62-16"><a href=""></a></span>
+<span id="cb62-17"><a href=""></a>data<span class="ot">=</span><span class="fu">data.frame</span>(<span class="at">x=</span>x,</span>
+<span id="cb62-18"><a href=""></a>                <span class="at">cos1=</span>cos1,<span class="at">sen1=</span>sin1,</span>
+<span id="cb62-19"><a href=""></a>                <span class="at">cos2=</span>cos2,<span class="at">sen2=</span>sin2,</span>
+<span id="cb62-20"><a href=""></a>                <span class="at">cos3=</span>cos3,<span class="at">sen3=</span>sin3,</span>
+<span id="cb62-21"><a href=""></a>                <span class="at">cos4=</span>cos4,<span class="at">sen4=</span>sin4,</span>
+<span id="cb62-22"><a href=""></a>                <span class="at">cos5=</span>cos5,<span class="at">sen5=</span>sin5)</span>
+<span id="cb62-23"><a href=""></a></span>
+<span id="cb62-24"><a href=""></a>mod2<span class="ot">&lt;-</span><span class="fu">lm</span>(x<span class="sc">~</span>.,<span class="at">data=</span>data)</span>
+<span id="cb62-25"><a href=""></a><span class="fu">plot</span>(cairo<span class="sc">$</span>temp<span class="sc">~</span>cairo<span class="sc">$</span>time,<span class="at">type=</span><span class="st">"l"</span>, <span class="at">ylab=</span><span class="st">"temp"</span>,<span class="at">xlab=</span><span class="st">"time"</span>)</span>
+<span id="cb62-26"><a href=""></a><span class="fu">points</span>(cairo<span class="sc">$</span>time,<span class="fu">fitted</span>(mod2),<span class="at">type=</span><span class="st">"l"</span>,<span class="at">col=</span><span class="dv">2</span>,<span class="at">lwd=</span><span class="dv">2</span>)  </span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-40-1.png" width="384"></p>
+</figure>
+</div>
+</div>
+</div></div>
+</section>
+<section id="próximo-tema" class="slide level2">
+<h2>Próximo tema</h2>
+<h3 id="tema-5-modelos-de-series-temporales">Tema 5: Modelos de series temporales</h3>
+
+</section></section>
+
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="presentacion_files/libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="presentacion_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="presentacion_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="presentacion_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="presentacion_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="presentacion_files/libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
+  <script src="presentacion_files/libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="presentacion_files/libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="presentacion_files/libs/revealjs/plugin/search/search.js"></script>
+  <script src="presentacion_files/libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="presentacion_files/libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"right","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleChalkboard(event)\"><kbd>b</kbd> Toggle Chalkboard</a></li>\n<li class=\"slide-tool-item\" data-item=\"6\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleNotesCanvas(event)\"><kbd>c</kbd> Toggle Notes Canvas</a></li>\n<li class=\"slide-tool-item\" data-item=\"7\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.downloadDrawings(event)\"><kbd>d</kbd> Download Drawings</a></li>\n<li class=\"slide-tool-item\" data-item=\"8\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true,"width":"wide","numbers":true},
+'chalkboard': {"buttons":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, RevealChalkboard, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+
+    <script>
+
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+
+      // slide changes (different for each slide format).
+
+      (function () {
+
+        // dispatch for htmlwidgets
+
+        function fireSlideEnter() {
+
+          const event = window.document.createEvent("Event");
+
+          event.initEvent("slideenter", true, true);
+
+          window.document.dispatchEvent(event);
+
+        }
+
+    
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+
+          fireSlideEnter();
+
+    
+
+          // dispatch for shiny
+
+          if (window.jQuery) {
+
+            if (previousSlide) {
+
+              window.jQuery(previousSlide).trigger("hidden");
+
+            }
+
+            if (currentSlide) {
+
+              window.jQuery(currentSlide).trigger("shown");
+
+            }
+
+          }
+
+        }
+
+    
+
+        // hookup for slidy
+
+        if (window.w3c_slidy) {
+
+          window.w3c_slidy.add_observer(function (slide_num) {
+
+            // slide_num starts at position 1
+
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+
+          });
+
+        }
+
+    
+
+      })();
+
+    </script>
+
+    
+
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copiado");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copiado");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp('/' + window.location.host + '/');
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>

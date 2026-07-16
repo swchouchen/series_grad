@@ -6,9 +6,9 @@
 <script src="presentacion_files/libs/quarto-html/tippy.umd.min.js"></script>
 <link href="presentacion_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="presentacion_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="presentacion_files/libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="presentacion_files/libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <link href="presentacion_files/libs/quarto-contrib/reveal-auto-agenda-0.0.3/reveal-auto-agenda.css" rel="stylesheet"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.8.25">
+  <meta name="generator" content="quarto-1.9.38">
 
   <meta name="author" content="Shu Wei Chou Chen">
   <title>Tema 1: Introducción al análisis de series temporales</title>
@@ -18,6 +18,9 @@
   <link rel="stylesheet" href="presentacion_files/libs/revealjs/dist/reset.css">
   <link rel="stylesheet" href="presentacion_files/libs/revealjs/dist/reveal.css">
   <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
     div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -96,7 +99,7 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="presentacion_files/libs/revealjs/dist/theme/quarto-829c66079de1ba6dba869a367cd4b667.css">
+  <link rel="stylesheet" href="presentacion_files/libs/revealjs/dist/theme/quarto-9eb768afb8c6a1b6b3ca03240ed62dd7.css">
   <link href="presentacion_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="presentacion_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="presentacion_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -197,7 +200,7 @@
 
 <section id="title-slide" class="quarto-title-block center">
   <h1 class="title">Tema 1: Introducción al análisis de series temporales</h1>
-  <p class="subtitle"><a href="https://swchouchen.github.io/series">Curso: Análisis de series temporales</a></p>
+  <p class="subtitle"><a href="https://swchouchen.github.io/series_grad">Curso: Series Cronológicas I</a></p>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
@@ -222,10 +225,8 @@
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a><span class="fu">library</span>(ggplot2)</span>
 <span id="cb1-2"><a href=""></a><span class="fu">library</span>(forecast)</span>
-<span id="cb1-3"><a href=""></a><span class="fu">library</span>(fpp2)</span>
-<span id="cb1-4"><a href=""></a><span class="fu">library</span>(astsa)</span>
-<span id="cb1-5"><a href=""></a><span class="fu">library</span>(quantmod)</span>
-<span id="cb1-6"><a href=""></a><span class="fu">library</span>(xts)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-3"><a href=""></a><span class="fu">library</span>(astsa)</span>
+<span id="cb1-4"><a href=""></a><span class="fu">library</span>(xts)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section>
@@ -243,16 +244,10 @@
 <p>Objetivos del análisis de series temporales</p>
 </div></li>
 <li><div class="agenda-inactive agenda-post-active">
-<p>Componentes de las series temporales</p>
-</div></li>
-<li><div class="agenda-inactive agenda-post-active">
 <p>Descomposición de series temporales</p>
 </div></li>
 <li><div class="agenda-inactive agenda-post-active">
-<p>Notación</p>
-</div></li>
-<li><div class="agenda-inactive agenda-post-active">
-<p>Técnicas y métodos para el Análisis de Series Temporales</p>
+<p>Evaluación de los pronósticos</p>
 </div></li>
 <li><div class="agenda-inactive agenda-post-active">
 <p>Creación de documentos y reportes usando Quarto</p>
@@ -328,13 +323,13 @@
 <div class="column" style="width:50%;">
 <div class="cell">
 <div class="cell-output-display">
-<div id="fig-gtemp" class="quarto-float quarto-figure quarto-figure-center">
+<div id="fig-jj" class="quarto-float quarto-figure quarto-figure-center">
 <figure class="quarto-float quarto-float-fig">
-<div aria-describedby="fig-gtemp-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img data-src="presentacion_files/figure-revealjs/fig-gtemp-1.png" width="384">
+<div aria-describedby="fig-jj-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img data-src="presentacion_files/figure-revealjs/fig-jj-1.png" width="384">
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-gtemp-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figura&nbsp;1: Desviación de temperatura global promedio (1880-2015) en grados centígrados (periodo base 1951-1980)
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-jj-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;1: Ganancias trimestrales por acción de Johnson &amp; Johnson y su transformación logarítmica.
 </figcaption>
 </figure>
 </div>
@@ -343,13 +338,48 @@ Figura&nbsp;1: Desviación de temperatura global promedio (1880-2015) en grados 
 </div><div class="column" style="width:50%;">
 <div class="cell">
 <div class="cell-output-display">
+<div id="fig-tempraturaLS" class="quarto-float quarto-figure quarto-figure-center">
+<figure class="quarto-float quarto-float-fig">
+<div aria-describedby="fig-tempraturaLS-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img data-src="presentacion_files/figure-revealjs/fig-tempraturaLS-1.png" width="384">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-tempraturaLS-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;2: Calentamiento global y cambio climático (desviación del promedio de 1991-2020).
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section class="slide level2">
+
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="cell-output-display">
 <div id="fig-aaahhh" class="quarto-float quarto-figure quarto-figure-center">
 <figure class="quarto-float quarto-float-fig">
 <div aria-describedby="fig-aaahhh-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img data-src="presentacion_files/figure-revealjs/fig-aaahhh-1.png" width="384">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-aaahhh-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figura&nbsp;2: Grabación de “aaahhh” muestreada de 1000 puntos por segundo con n = 1020.
+Figura&nbsp;3: Grabación de “aaahhh” muestreada de 1000 puntos por segundo con n = 1020.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-gtemp" class="quarto-float quarto-figure quarto-figure-center">
+<figure class="quarto-float quarto-float-fig">
+<div aria-describedby="fig-gtemp-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img data-src="presentacion_files/figure-revealjs/fig-gtemp-1.png" width="384">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-gtemp-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;4: Promedio Industrial Dow Jones.
 </figcaption>
 </figure>
 </div>
@@ -375,7 +405,7 @@ Figura&nbsp;2: Grabación de “aaahhh” muestreada de 1000 puntos por segundo 
 <img data-src="presentacion_files/figure-revealjs/fig-bold-1.png" width="384">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-bold-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figura&nbsp;3: BOLD
+Figura&nbsp;5: BOLD
 </figcaption>
 </figure>
 </div>
@@ -398,16 +428,10 @@ Figura&nbsp;3: BOLD
 <p>Objetivos del análisis de series temporales</p>
 </div></li>
 <li><div class="agenda-inactive agenda-post-active">
-<p>Componentes de las series temporales</p>
-</div></li>
-<li><div class="agenda-inactive agenda-post-active">
 <p>Descomposición de series temporales</p>
 </div></li>
 <li><div class="agenda-inactive agenda-post-active">
-<p>Notación</p>
-</div></li>
-<li><div class="agenda-inactive agenda-post-active">
-<p>Técnicas y métodos para el Análisis de Series Temporales</p>
+<p>Evaluación de los pronósticos</p>
 </div></li>
 <li><div class="agenda-inactive agenda-post-active">
 <p>Creación de documentos y reportes usando Quarto</p>
@@ -415,7 +439,7 @@ Figura&nbsp;3: BOLD
 </ol>
 </div>
 </section>
-<section id="objetivos-del-análisis-de-series-temporales-1" class="slide level2">
+<section id="objetivos-del-análisis-de-series-temporales-1" class="slide level2 smaller">
 <h2>Objetivos del análisis de series temporales</h2>
 <ul>
 <li><span class="alert">Descripción</span>:
@@ -433,9 +457,6 @@ Figura&nbsp;3: BOLD
 <li>Pronosticar o predecir valores de una serie en el futuro. Puede ser a corto plazo (series de ventas y de producción) o largo plazo (series de población, series relacionadas al calendamiento global, etc.).</li>
 </ul></li>
 </ul>
-</section>
-<section class="slide level2">
-
 <div class="callout callout-note callout-titled callout-style-default">
 <div class="callout-body">
 <div class="callout-title">
@@ -454,184 +475,8 @@ Figura&nbsp;3: BOLD
 </div>
 </div>
 </div>
-</section></section>
-<section>
-<section id="componentes-de-las-series-temporales" class="title-slide slide level1 agenda-slide center">
-<h1>Componentes de las series temporales</h1>
-<div class="agenda-heading">
-<p>Contenido</p>
-</div>
-<div class="agenda">
-<ol>
-<li><div class="agenda-inactive agenda-pre-active">
-<p>Consideraciones generales</p>
-</div></li>
-<li><div class="agenda-inactive agenda-pre-active">
-<p>Objetivos del análisis de series temporales</p>
-</div></li>
-<li><div class="agenda-active">
-<p>Componentes de las series temporales</p>
-</div></li>
-<li><div class="agenda-inactive agenda-post-active">
-<p>Descomposición de series temporales</p>
-</div></li>
-<li><div class="agenda-inactive agenda-post-active">
-<p>Notación</p>
-</div></li>
-<li><div class="agenda-inactive agenda-post-active">
-<p>Técnicas y métodos para el Análisis de Series Temporales</p>
-</div></li>
-<li><div class="agenda-inactive agenda-post-active">
-<p>Creación de documentos y reportes usando Quarto</p>
-</div></li>
-</ol>
-</div>
 </section>
-<section id="componentes-de-las-series-temporales-1" class="slide level2">
-<h2>Componentes de las series temporales</h2>
-<ul>
-<li><p>Existe varios componentes en el comportamiento de series temporales:</p>
-<ol type="1">
-<li><span class="alert">Tendencia:</span> comportamiento creciente o decreciente en largo plazo. Ej: crecimiento de población, ingresos por ventas.</li>
-<li><span class="alert">Estacionalidad:</span> patrón o variaciones afectadas por repetición de una frecuencia dada (ej. semana, mes y año.). Consecuencia de cambios climáticos, comportamiento de la gente en el tiempo. Ej: venta de productos que dependen de la temporada, temperatura, pasajes de avión.</li>
-<li><span class="alert">Ciclo:</span> cuando los datos muestran subidas y bajadas de largo plazo, generalmente con frecuencia desconocida. Ej: ciclo económico, período de prosperidad alternando con período de recesión.</li>
-<li><span class="alert">Movimiento irregular o error:</span> variaciones en la serie que no siguen ningún patrón regular. Es el residuo que queda en una serie después de eliminar los componentes anteriores (tendencia-ciclo y estacionalidad).</li>
-</ol></li>
-</ul>
-</section>
-<section id="ejemplo" class="slide level2">
-<h2>Ejemplo</h2>
-<p>La base de datos <code>AirPassenger</code> en R proporciona total de pasajeros mensuales de una aerolínea estadounidense de 1949 a 1960.</p>
-
-<img data-src="presentacion_files/figure-revealjs/unnamed-chunk-2-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:40.0%"></section></section>
-<section>
-<section id="descomposición-de-series-temporales" class="title-slide slide level1 agenda-slide center">
-<h1>Descomposición de series temporales</h1>
-<div class="agenda-heading">
-<p>Contenido</p>
-</div>
-<div class="agenda">
-<ol>
-<li><div class="agenda-inactive agenda-pre-active">
-<p>Consideraciones generales</p>
-</div></li>
-<li><div class="agenda-inactive agenda-pre-active">
-<p>Objetivos del análisis de series temporales</p>
-</div></li>
-<li><div class="agenda-inactive agenda-pre-active">
-<p>Componentes de las series temporales</p>
-</div></li>
-<li><div class="agenda-active">
-<p>Descomposición de series temporales</p>
-</div></li>
-<li><div class="agenda-inactive agenda-post-active">
-<p>Notación</p>
-</div></li>
-<li><div class="agenda-inactive agenda-post-active">
-<p>Técnicas y métodos para el Análisis de Series Temporales</p>
-</div></li>
-<li><div class="agenda-inactive agenda-post-active">
-<p>Creación de documentos y reportes usando Quarto</p>
-</div></li>
-</ol>
-</div>
-</section>
-<section id="descomposición-de-series-temporales-1" class="slide level2">
-<h2>Descomposición de series temporales</h2>
-<h3 id="ejemplo-pasajeros">Ejemplo: pasajeros</h3>
-<div class="columns">
-<div class="column" style="width:50%;">
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-3-1.png" style="width:90.0%"></p>
-</figure>
-</div>
-</div>
-</div>
-</div><div class="column" style="width:50%;">
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-4-1.png" style="width:90.0%"></p>
-</figure>
-</div>
-</div>
-</div>
-</div></div>
-</section>
-<section class="slide level2">
-
-<h3 id="ejemplo-llegadas-internacionales">Ejemplo: llegadas internacionales</h3>
-<ul>
-<li>La base de datos <code>fpp2::arrivals</code> tiene los datos de llegadas internacionales a Australia por cuatrimestre (en miles), desde Japón, Nueva Zelanda, Reino Unido y Estados Unidos.</li>
-</ul>
-<div class="columns">
-<div class="column" style="width:50%;">
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-5-1.png" width="384"></p>
-</figure>
-</div>
-</div>
-</div>
-</div><div class="column" style="width:50%;">
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-6-1.png" width="384"></p>
-</figure>
-</div>
-</div>
-</div>
-</div></div>
-</section>
-<section class="slide level2">
-
-<h3 id="ejemplo-promedio-diario-industrial-dow-jone">Ejemplo: Promedio diario industrial Dow Jone</h3>
-<ul>
-<li>Índice compuesto por 30 mayores empresas en la bolsa de valores de los Estados Unidos (12 de diciembre, 2016 a 12 de diciembre, 2018).</li>
-</ul>
-
-<img data-src="presentacion_files/figure-revealjs/unnamed-chunk-8-1.png" width="384" class="r-stretch"></section></section>
-<section>
-<section id="notación" class="title-slide slide level1 agenda-slide center">
-<h1>Notación</h1>
-<div class="agenda-heading">
-<p>Contenido</p>
-</div>
-<div class="agenda">
-<ol>
-<li><div class="agenda-inactive agenda-pre-active">
-<p>Consideraciones generales</p>
-</div></li>
-<li><div class="agenda-inactive agenda-pre-active">
-<p>Objetivos del análisis de series temporales</p>
-</div></li>
-<li><div class="agenda-inactive agenda-pre-active">
-<p>Componentes de las series temporales</p>
-</div></li>
-<li><div class="agenda-inactive agenda-pre-active">
-<p>Descomposición de series temporales</p>
-</div></li>
-<li><div class="agenda-active">
-<p>Notación</p>
-</div></li>
-<li><div class="agenda-inactive agenda-post-active">
-<p>Técnicas y métodos para el Análisis de Series Temporales</p>
-</div></li>
-<li><div class="agenda-inactive agenda-post-active">
-<p>Creación de documentos y reportes usando Quarto</p>
-</div></li>
-</ol>
-</div>
-</section>
-<section id="notación-1" class="slide level2">
+<section id="notación" class="slide level2">
 <h2>Notación</h2>
 <ul>
 <li>Una serie temporal observada <span class="math inline">\(X_t\)</span>, desde tiempo <span class="math inline">\(1\)</span> hasta tiempo <span class="math inline">\(T\)</span> se denota como</li>
@@ -647,11 +492,11 @@ Figura&nbsp;3: BOLD
 </div>
 <div class="callout-content">
 <ul>
-<li>Pero se puede considerar una serie temporal como una secuencia de variables aleatorias</li>
+<li>Considere una serie temporal como una secuencia de variables aleatorias</li>
 </ul>
 <p><span class="math display">\[X_1,X_2,..,X_t,...\]</span></p>
 <ul>
-<li><p>Como no son independientes, la inferencia estadística vista no sirve aquí, y se necesitan otros conceptos.</p></li>
+<li><p>Como las observaciones no son independientes, la inferencia estadística tradicional no es aplicable en este contexto y se requieren otros enfoques.</p></li>
 <li><p><span class="alert">Proceso estocástico:</span> una colección de variables aleatorias indexada por un conjunto <span class="math inline">\(\mathcal{T}\)</span>, <span class="math display">\[\left\lbrace X_t, t \in \mathcal{T} \right\rbrace\]</span></p></li>
 <li><p>Vamos a enfocar el caso cuando <span class="math inline">\(\mathcal{T}\)</span> es un conjunto discreto, i.e.&nbsp;<span class="math inline">\(t=0,1,2,...\)</span>.</p></li>
 </ul>
@@ -660,8 +505,383 @@ Figura&nbsp;3: BOLD
 </div>
 </section></section>
 <section>
-<section id="técnicas-y-métodos-para-el-análisis-de-series-temporales" class="title-slide slide level1 agenda-slide center">
-<h1>Técnicas y métodos para el Análisis de Series Temporales</h1>
+<section id="descomposición-de-series-temporales" class="title-slide slide level1 agenda-slide center">
+<h1>Descomposición de series temporales</h1>
+<div class="agenda-heading">
+<p>Contenido</p>
+</div>
+<div class="agenda">
+<ol>
+<li><div class="agenda-inactive agenda-pre-active">
+<p>Consideraciones generales</p>
+</div></li>
+<li><div class="agenda-inactive agenda-pre-active">
+<p>Objetivos del análisis de series temporales</p>
+</div></li>
+<li><div class="agenda-active">
+<p>Descomposición de series temporales</p>
+</div></li>
+<li><div class="agenda-inactive agenda-post-active">
+<p>Evaluación de los pronósticos</p>
+</div></li>
+<li><div class="agenda-inactive agenda-post-active">
+<p>Creación de documentos y reportes usando Quarto</p>
+</div></li>
+</ol>
+</div>
+</section>
+<section id="descomposición-de-series-temporales-1" class="slide level2">
+<h2>Descomposición de series temporales</h2>
+<ul>
+<li><p>Existe varios componentes en el comportamiento de series temporales:</p>
+<ol type="1">
+<li><span class="alert">Tendencia:</span> comportamiento creciente o decreciente en largo plazo. Ej: crecimiento de población, ingresos por ventas.</li>
+<li><span class="alert">Estacionalidad:</span> patrón o variaciones afectadas por repetición de una frecuencia dada (ej. semana, mes y año.). Consecuencia de cambios climáticos, comportamiento de la gente en el tiempo. Ej: venta de productos que dependen de la temporada, temperatura, pasajes de avión.</li>
+<li><span class="alert">Ciclo:</span> cuando los datos muestran subidas y bajadas de largo plazo, generalmente con frecuencia desconocida. Ej: ciclo económico, período de prosperidad alternando con período de recesión.</li>
+<li><span class="alert">Movimiento irregular o error:</span> variaciones en la serie que no siguen ningún patrón regular. Es el residuo que queda en una serie después de eliminar los componentes anteriores (tendencia-ciclo y estacionalidad).</li>
+</ol></li>
+</ul>
+</section>
+<section id="ejemplos-1" class="slide level2">
+<h2>Ejemplos</h2>
+<p>La base de datos <code>AirPassenger</code> en R proporciona total de pasajeros mensuales de una aerolínea estadounidense de 1949 a 1960.</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href=""></a><span class="fu">data</span>(AirPassengers)</span>
+<span id="cb2-2"><a href=""></a><span class="fu">class</span>(AirPassengers)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "ts"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href=""></a><span class="fu">head</span>(AirPassengers)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Jan Feb Mar Apr May Jun
+1949 112 118 132 129 121 135</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href=""></a>AP_vector <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(AirPassengers)</span>
+<span id="cb6-2"><a href=""></a>AP_vector</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  [1] 112 118 132 129 121 135 148 148 136 119 104 118 115 126 141 135 125 149
+ [19] 170 170 158 133 114 140 145 150 178 163 172 178 199 199 184 162 146 166
+ [37] 171 180 193 181 183 218 230 242 209 191 172 194 196 196 236 235 229 243
+ [55] 264 272 237 211 180 201 204 188 235 227 234 264 302 293 259 229 203 229
+ [73] 242 233 267 269 270 315 364 347 312 274 237 278 284 277 317 313 318 374
+ [91] 413 405 355 306 271 306 315 301 356 348 355 422 465 467 404 347 305 336
+[109] 340 318 362 348 363 435 491 505 404 359 310 337 360 342 406 396 420 472
+[127] 548 559 463 407 362 405 417 391 419 461 472 535 622 606 508 461 390 432</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href=""></a>AP_ts <span class="ot">&lt;-</span> <span class="fu">ts</span>(AP_vector, <span class="at">start=</span><span class="fu">c</span>(<span class="dv">1949</span>,<span class="dv">1</span>), <span class="at">frequency=</span><span class="dv">12</span>)</span>
+<span id="cb8-2"><a href=""></a><span class="fu">class</span>(AP_vector); <span class="fu">class</span>(AP_ts)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "numeric"</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "ts"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href=""></a><span class="fu">plot</span>(AirPassengers)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-3-1.png" style="width:90.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section class="slide level2">
+
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href=""></a><span class="fu">autoplot</span>(AirPassengers)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-4-1.png" style="width:90.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href=""></a>decomposeAP <span class="ot">&lt;-</span> <span class="fu">decompose</span>(AirPassengers,<span class="st">"multiplicative"</span>)</span>
+<span id="cb13-2"><a href=""></a><span class="fu">autoplot</span>(decomposeAP)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-5-1.png" style="width:90.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section class="slide level2">
+
+<p>La base de datos <code>fpp2::ausbeer</code>: producción trimestral total de cerveza en Australia (en megalitros) desde el primer trimestre de 1956 hasta el segundo trimestre de 2010.</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href=""></a><span class="fu">autoplot</span>(fpp2<span class="sc">::</span>ausbeer)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-6-1.png" style="width:90.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href=""></a>decomposeBeer <span class="ot">&lt;-</span> <span class="fu">decompose</span>(fpp2<span class="sc">::</span>ausbeer,<span class="st">"additive"</span>)</span>
+<span id="cb15-2"><a href=""></a><span class="fu">autoplot</span>(decomposeBeer)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-7-1.png" style="width:90.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="medias-móviles" class="slide level2">
+<h2>Medias móviles</h2>
+<ul>
+<li><p>El primer paso en una descomposición clásica es utilizar un método de media móvil para estimar el ciclo de tendencia.</p></li>
+<li><p>Sea <span class="math inline">\(X_t\)</span> una serie de interés. Una media móvil de orden <span class="math inline">\(m\)</span> se puede escribir como: <span class="math display">\[\begin{equation}
+MA_{t} = \frac{1}{m} \sum_{j=-k}^k X_{t+j},
+\end{equation}\]</span> donde <span class="math inline">\(m = 2k+1\)</span> es impar<sup>1</sup>.</p></li>
+<li><p>La estimación de tendencia-ciclo en el momento <span class="math inline">\(t\)</span> se obtiene promediando los valores de la serie temporal dentro de <span class="math inline">\(k\)</span> períodos de <span class="math inline">\(t\)</span>.</p></li>
+<li><p>El promedio elimina parte de la aleatoriedad de los datos, dejando un componente tendencia-ciclo uniforme, es decir <span class="alert">suaviza</span> la serie original. A esto se le llama <span class="math inline">\(m\)</span>-<strong>MA</strong>, que significa media móvil de orden <span class="math inline">\(m\)</span>.</p></li>
+</ul>
+<aside><ol class="aside-footnotes"><li id="fn1"><p>Más adelante veremos cómo se procede con <span class="math inline">\(m\)</span> par</p></li></ol></aside></section>
+<section class="slide level2">
+
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href=""></a>ejemploMA <span class="ot">&lt;-</span> <span class="fu">cbind</span>(AirPassengers,</span>
+<span id="cb16-2"><a href=""></a>      <span class="fu">ma</span>(AirPassengers, <span class="dv">3</span>), <span class="fu">ma</span>(AirPassengers, <span class="dv">5</span>))</span>
+<span id="cb16-3"><a href=""></a><span class="fu">head</span>(ejemploMA, <span class="dv">10</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         AirPassengers ma(AirPassengers, 3) ma(AirPassengers, 5)
+Jan 1949           112                   NA                   NA
+Feb 1949           118             120.6667                   NA
+Mar 1949           132             126.3333                122.4
+Apr 1949           129             127.3333                127.0
+May 1949           121             128.3333                133.0
+Jun 1949           135             134.6667                136.2
+Jul 1949           148             143.6667                137.6
+Aug 1949           148             144.0000                137.2
+Sep 1949           136             134.3333                131.0
+Oct 1949           119             119.6667                125.0</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href=""></a><span class="fu">tail</span>(ejemploMA, <span class="dv">10</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         AirPassengers ma(AirPassengers, 3) ma(AirPassengers, 5)
+Mar 1960           419             423.6667                432.0
+Apr 1960           461             450.6667                455.6
+May 1960           472             489.3333                501.8
+Jun 1960           535             543.0000                539.2
+Jul 1960           622             587.6667                548.6
+Aug 1960           606             578.6667                546.4
+Sep 1960           508             525.0000                517.4
+Oct 1960           461             453.0000                479.4
+Nov 1960           390             427.6667                   NA
+Dec 1960           432                   NA                   NA</code></pre>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+
+<img data-src="presentacion_files/figure-revealjs/fig-MAairpassengers-1.png" width="384" class="r-stretch quarto-figure-center" id="fig-MAairpassengers"><p class="caption">
+Figura&nbsp;6: Diferentes medias móviles aplicado a los datos de pasajeros
+</p></section>
+<section id="descomposición-clásica" class="slide level2">
+<h2>Descomposición Clásica</h2>
+<ul>
+<li><span class="alert">Modelo aditivo</span></li>
+</ul>
+<p><span class="math display">\[X_{t} = T_{t} + S_{t}  + I_t,\]</span></p>
+<ul>
+<li><span class="alert">Modelo multiplicativo</span></li>
+</ul>
+<p><span class="math display">\[X_{t} = T_{t} \times S_{t} \times I_t,\]</span> donde:<br> <span class="math inline">\(X_t\)</span>: el valor de la serie <span class="math inline">\(Z\)</span> en el tiempo <span class="math inline">\(t\)</span>, <br> <span class="math inline">\(T_t\)</span>: componente tendencia-ciclo en el tiempo <span class="math inline">\(t\)</span>. <br> <span class="math inline">\(S_t\)</span>: componente estacional en el tiempo <span class="math inline">\(t\)</span>. <br> <span class="math inline">\(I_t\)</span>: componente irregular, aleatorio en el tiempo <span class="math inline">\(t\)</span>.</p>
+</section>
+<section class="slide level2">
+
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Nota</strong></p>
+</div>
+<div class="callout-content">
+<ul>
+<li><p>La descomposicion aditiva es la más apropiada si la magnitud de las fluctuaciones o la variación alrededor del tendencia-ciclo no varía con el nivel de la serie de tiempo.</p></li>
+<li><p>La descomposición multiplicativa se usa cuando la variación en el patrón estacional o la variación alrededor de tendencia-ciclo, parece ser proporcional al nivel de la serie de tiempo. Es común ver esto en las series del ámbito económico.</p></li>
+<li><p>Utilizando la transformación logarítmica en una serie de datos, el modelo multiplicativo se convierte en un modelo aditivo. (Esto equivale a estabilizar la variabilidad a lo largo del tiempo) <span class="math display">\[X_t=T_t \times S_t \times I_t\]</span> es equivalente a <span class="math display">\[\log X_t = \log T_t + \log S_t + \log I_t.\]</span></p></li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<section id="ejemplo-de-los-pasajeros-mensuales" class="slide level2">
+<h2>Ejemplo de los Pasajeros mensuales</h2>
+<ul>
+<li>Recordemos del ejemplo de pasajeros mensuales.</li>
+</ul>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href=""></a><span class="fu">autoplot</span>(AirPassengers)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fig-airpassengers" class="quarto-float quarto-figure quarto-figure-center">
+<figure class="quarto-float quarto-float-fig">
+<div aria-describedby="fig-airpassengers-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img data-src="presentacion_files/figure-revealjs/fig-airpassengers-1.png" width="384">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-airpassengers-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;7: Pasajeros
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href=""></a><span class="fu">autoplot</span>(<span class="fu">log</span>(AirPassengers)) </span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fig-logairpassengers" class="quarto-float quarto-figure quarto-figure-center">
+<figure class="quarto-float quarto-float-fig">
+<div aria-describedby="fig-logairpassengers-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img data-src="presentacion_files/figure-revealjs/fig-logairpassengers-1.png" width="384">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-logairpassengers-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;8: Log-pasajeros
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section class="slide level2">
+
+<ul>
+<li>La descomposición consiste en descomponer la serie en diferentes componentes.</li>
+</ul>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href=""></a>decomposeAP <span class="ot">&lt;-</span> <span class="fu">decompose</span>(AirPassengers,<span class="st">"additive"</span>)</span>
+<span id="cb22-2"><a href=""></a><span class="fu">autoplot</span>(decomposeAP)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-10-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href=""></a>decomposeAP <span class="ot">&lt;-</span> <span class="fu">decompose</span>(AirPassengers,<span class="st">"multiplicative"</span>)</span>
+<span id="cb23-2"><a href=""></a><span class="fu">autoplot</span>(decomposeAP)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-11-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="descomposición-stl" class="slide level2">
+<h2>Descomposición STL</h2>
+<ul>
+<li>Propuesto por <a href="https://www.scb.se/contentassets/ca21efb41fee47d293bbee5bf7be7fb3/stl-a-seasonal-trend-decomposition-procedure-based-on-loess.pdf">Cleveland et al.&nbsp;(1990)</a></li>
+<li>Seasonal and trend descomposition using loess (en inglés).</li>
+<li>LOESS (locally weighted smoothing), también llamado LOWESS (Locally Weighted Scatterplot Smoothing), es una técnica de regresión no lineal.</li>
+<li>Localmente ajusta regresión lineal y crea una curva suave en el tiempo para estimar la tendencia.</li>
+<li>Ventajas:
+<ul>
+<li>el componente estacional puede variar en el tiempo.</li>
+<li>permite el control del grado de suavizamiento.</li>
+<li>es robusto a los outliers.</li>
+</ul></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href=""></a>stl1<span class="ot">&lt;-</span><span class="fu">stl</span>(AirPassengers,<span class="at">t.window=</span><span class="dv">20</span>, </span>
+<span id="cb24-2"><a href=""></a>            <span class="at">s.window=</span><span class="st">"periodic"</span>)</span>
+<span id="cb24-3"><a href=""></a><span class="fu">plot</span>(stl1)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-12-1.png" width="384"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href=""></a>stl2<span class="ot">&lt;-</span><span class="fu">stl</span>(AirPassengers,<span class="at">t.window=</span><span class="dv">5</span>, </span>
+<span id="cb25-2"><a href=""></a>            <span class="at">s.window=</span><span class="st">"periodic"</span>)</span>
+<span id="cb25-3"><a href=""></a><span class="fu">plot</span>(stl2)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-13-1.png" width="384"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section class="slide level2">
+
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href=""></a>stl3<span class="ot">&lt;-</span><span class="fu">stl</span>(AirPassengers, <span class="at">s.window=</span><span class="st">"periodic"</span>)</span>
+<span id="cb26-2"><a href=""></a><span class="fu">plot</span>(stl3)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-14-1.png" width="384"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href=""></a>stl4<span class="ot">&lt;-</span><span class="fu">stl</span>(AirPassengers, <span class="at">s.window=</span> <span class="dv">7</span>)</span>
+<span id="cb27-2"><a href=""></a><span class="fu">plot</span>(stl4)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-15-1.png" width="384"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section></section>
+<section>
+<section id="evaluación-de-los-pronósticos" class="title-slide slide level1 agenda-slide center">
+<h1>Evaluación de los pronósticos</h1>
 <div class="agenda-heading">
 <p>Contenido</p>
 </div>
@@ -674,16 +894,10 @@ Figura&nbsp;3: BOLD
 <p>Objetivos del análisis de series temporales</p>
 </div></li>
 <li><div class="agenda-inactive agenda-pre-active">
-<p>Componentes de las series temporales</p>
-</div></li>
-<li><div class="agenda-inactive agenda-pre-active">
 <p>Descomposición de series temporales</p>
 </div></li>
-<li><div class="agenda-inactive agenda-pre-active">
-<p>Notación</p>
-</div></li>
 <li><div class="agenda-active">
-<p>Técnicas y métodos para el Análisis de Series Temporales</p>
+<p>Evaluación de los pronósticos</p>
 </div></li>
 <li><div class="agenda-inactive agenda-post-active">
 <p>Creación de documentos y reportes usando Quarto</p>
@@ -691,21 +905,127 @@ Figura&nbsp;3: BOLD
 </ol>
 </div>
 </section>
-<section id="técnicas-y-métodos-para-el-análisis-de-series-temporales-1" class="slide level2">
-<h2>Técnicas y métodos para el Análisis de Series Temporales</h2>
+<section id="evaluación-de-los-pronósticos-de-un-modelo" class="slide level2">
+<h2>Evaluación de los pronósticos de un modelo</h2>
 <ul>
-<li>Descomposición de series temporales.</li>
-<li>Técnicas de suavizamiento exponencial.</li>
-<li>Regresión.</li>
-<li>Modelos ARIMA de Box-Jenkins.</li>
-<li>Modelos ARCH-GARCH.</li>
-<li>Análisis de intervención.</li>
-<li>Modelos Espacio de Estados.</li>
-<li>Modelos Multivariados.</li>
-<li>Modelos causales.</li>
-<li>Modelos no lineales.</li>
-<li>…</li>
+<li><p>Sean <span class="math inline">\(X_1,...,X_T\)</span> las observaciones y <span class="math inline">\(\hat{X}_1,...,\hat{X}_T\)</span> los valores ajustados de un modelo particular.</p></li>
+<li><p>Defina el error de pronóstico <span class="math display">\[e_t=X_t- \hat{X}_t\]</span> <strong>Algunas consideraciones:</strong></p></li>
+<li><p>¿Son correlacionados?</p></li>
+<li><p>¿Tienen media cero?</p></li>
+<li><p>¿Variancia constante?</p></li>
+<li><p>¿Tienen distribución normal?</p></li>
 </ul>
+</section>
+<section id="medidas-de-precisión" class="slide level2">
+<h2>Medidas de precisión</h2>
+<p>Suponga que se tiene una serie <span class="math inline">\(X_t\)</span> de <span class="math inline">\(T\)</span> observaciones.</p>
+<ul>
+<li><p>Dividir las observaciones en <span class="math inline">\(X_1,...,X_{T-1}\)</span> y <span class="math inline">\(X_{T}\)</span>.</p></li>
+<li><p>Ajustar el modelo con <span class="math inline">\(X_1,...,X_{T-1}\)</span> y pronosticar el valor de <span class="math inline">\(\hat{X}_{T}\)</span>.</p></li>
+<li><p>El error de pronóstico es definido por <span class="math display">\[e_T=X_T- \hat{X}_T\]</span></p></li>
+<li><p><span class="math inline">\(\hat{X}_{T}\)</span> es llamado <span class="alert">pronóstico un paso para adelante</span>.</p></li>
+<li><p><span class="math inline">\(e_{T}\)</span> es llamado <span class="alert">error de pronóstico un paso para adelante</span>.</p></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>En la práctica, se divide la serie <span class="math inline">\(X_t\)</span>, <span class="math inline">\(t=1,...,T\)</span> en dos conjuntos:</p>
+<ul>
+<li><span class="alert">Base de datos de entrenamiento</span> <span class="math inline">\(X_1,...,X_{T'}\)</span> (para ajustar el modelo)</li>
+<li><span class="alert">Base de datos de prueba</span> <span class="math inline">\(X_{T'+1},...,X_{T'+h}\)</span> (para validar el modelo)</li>
+</ul></li>
+</ul>
+<p>donde <span class="math inline">\(1&lt; T'&lt; T\)</span>. Usualmente <span class="math inline">\(h/T \approx 0.2\)</span> o <span class="math inline">\(0.1\)</span>.</p>
+<ul>
+<li>Ajustar el modelo con <span class="math inline">\(X_1,...,X_{T'}\)</span> y pronosticar los valores de <span class="math inline">\(\hat{X}_{T'+1},...,\hat{X}_{T'+h}\)</span> (<span class="alert">pronóstico a <span class="math inline">\(h\)</span> paso para adelante</span>).</li>
+<li>Definan las siguientes medidas:
+<ul>
+<li><span class="alert">Error absoluto medio (mean absolute error, MAE)</span> <span class="math display">\[\operatorname{MAE} = \frac{\sum\limits_{i=1}^h |e_{T+i}|}{h}\]</span></li>
+</ul></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p><span class="alert">Error cuadrático medio (mean squared error, MSE)</span> <span class="math display">\[\operatorname{MSE} = \frac{\sum\limits_{i=1}^h (e_{T+i})^2}{h}\]</span></p></li>
+<li><p><span class="alert">Error porcentual absoluto medio (mean absolute percentage error, MAPE)</span> <span class="math display">\[\operatorname{MAPE} = \frac{\sum\limits_{i=1}^h |EP_{T+i}|}{h}\]</span> donde <span class="math inline">\(EP_{j}=100 \left[ \frac{X_j-\hat{X_j}}{X_j} \right]\)</span>.</p></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li>Pronósticos con STL.</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href=""></a>AP.train<span class="ot">&lt;-</span><span class="fu">window</span>(AirPassengers,<span class="at">start=</span><span class="fu">c</span>(<span class="dv">1949</span>,<span class="dv">1</span>),<span class="at">end=</span><span class="fu">c</span>(<span class="dv">1959</span>,<span class="dv">12</span>))</span>
+<span id="cb28-2"><a href=""></a>AP.test<span class="ot">&lt;-</span><span class="fu">window</span>(AirPassengers,<span class="at">start=</span><span class="fu">c</span>(<span class="dv">1960</span>,<span class="dv">1</span>),<span class="at">end=</span><span class="fu">c</span>(<span class="dv">1960</span>,<span class="dv">12</span>))</span>
+<span id="cb28-3"><a href=""></a>AP.stl<span class="ot">&lt;-</span><span class="fu">stl</span>(AP.train, <span class="at">s.window=</span><span class="st">"periodic"</span>)</span>
+<span id="cb28-4"><a href=""></a>AP.stl.forecast <span class="ot">&lt;-</span> <span class="fu">forecast</span>(AP.stl, <span class="at">h =</span> <span class="dv">12</span>)</span>
+<span id="cb28-5"><a href=""></a>AP.stl.forecast <span class="sc">%&gt;%</span> <span class="fu">autoplot</span>() <span class="sc">+</span></span>
+<span id="cb28-6"><a href=""></a>  <span class="fu">autolayer</span>(AP.test, <span class="at">series =</span> <span class="st">"Test set"</span>, <span class="at">color =</span> <span class="st">"red"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="presentacion_files/figure-revealjs/unnamed-chunk-16-1.png" width="384" class="r-stretch"></section>
+<section class="slide level2">
+
+<div class="columns">
+<div class="column" style="width:50%;">
+<ul>
+<li>Precisión con training set.</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href=""></a><span class="fu">accuracy</span>(AP.stl.forecast)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                   ME     RMSE      MAE       MPE     MAPE      MASE      ACF1
+Training set 2.258201 15.28285 11.56855 0.9344181 5.058835 0.3799194 0.1792363</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href=""></a><span class="co">#verificación</span></span>
+<span id="cb31-2"><a href=""></a></span>
+<span id="cb31-3"><a href=""></a>e.train <span class="ot">&lt;-</span> AP.train <span class="sc">-</span> <span class="fu">fitted</span>(AP.stl.forecast)</span>
+<span id="cb31-4"><a href=""></a>(RMSE.train<span class="ot">&lt;-</span><span class="fu">sqrt</span>(<span class="fu">sum</span>((e.train)<span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span><span class="fu">length</span>(e.train)))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 15.28285</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href=""></a>(MAE.train<span class="ot">&lt;-</span><span class="fu">sum</span>(<span class="fu">abs</span>(e.train))<span class="sc">/</span><span class="fu">length</span>(e.train))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 11.56855</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href=""></a>(MAPE.train <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">abs</span>(<span class="dv">100</span><span class="sc">*</span>e.train<span class="sc">/</span>AP.train))<span class="sc">/</span><span class="fu">length</span>(e.train))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 5.058835</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<ul>
+<li>Precisión con testing set.</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href=""></a><span class="fu">accuracy</span>(AP.stl.forecast, AP.test)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                    ME     RMSE      MAE       MPE     MAPE      MASE      ACF1
+Training set  2.258201 15.28285 11.56855 0.9344181 5.058835 0.3799194 0.1792363
+Test set     41.990584 59.38048 46.58364 7.7756153 8.903944 1.5298405 0.6960642
+             Theil's U
+Training set        NA
+Test set      1.051162</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href=""></a><span class="co">#verificación</span></span>
+<span id="cb39-2"><a href=""></a>e.test <span class="ot">&lt;-</span> AP.test <span class="sc">-</span> AP.stl.forecast<span class="sc">$</span>mean</span>
+<span id="cb39-3"><a href=""></a>(RMSE.test<span class="ot">&lt;-</span><span class="fu">sqrt</span>(<span class="fu">sum</span>((e.test)<span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span><span class="fu">length</span>(e.test)))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 59.38048</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href=""></a>(MAE.test<span class="ot">&lt;-</span><span class="fu">sum</span>(<span class="fu">abs</span>(e.test))<span class="sc">/</span><span class="fu">length</span>(e.test))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 46.58364</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href=""></a>(MAPE.test <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">abs</span>(<span class="dv">100</span><span class="sc">*</span>e.test<span class="sc">/</span>AP.test))<span class="sc">/</span><span class="fu">length</span>(e.test))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 8.903944</code></pre>
+</div>
+</div>
+</div></div>
 </section></section>
 <section>
 <section id="creación-de-documentos-y-reportes-usando-quarto" class="title-slide slide level1 agenda-slide center">
@@ -722,16 +1042,10 @@ Figura&nbsp;3: BOLD
 <p>Objetivos del análisis de series temporales</p>
 </div></li>
 <li><div class="agenda-inactive agenda-pre-active">
-<p>Componentes de las series temporales</p>
-</div></li>
-<li><div class="agenda-inactive agenda-pre-active">
 <p>Descomposición de series temporales</p>
 </div></li>
 <li><div class="agenda-inactive agenda-pre-active">
-<p>Notación</p>
-</div></li>
-<li><div class="agenda-inactive agenda-pre-active">
-<p>Técnicas y métodos para el Análisis de Series Temporales</p>
+<p>Evaluación de los pronósticos</p>
 </div></li>
 <li><div class="agenda-active">
 <p>Creación de documentos y reportes usando Quarto</p>
@@ -748,23 +1062,9 @@ Figura&nbsp;3: BOLD
 </ul>
 <p>Más detalles ver: <a href="https://quarto.org/" class="uri">https://quarto.org/</a></p>
 
-<img data-src="quartoflow.png" class="r-stretch quarto-figure-center"><p class="caption">Diagrama de Quarto</p></section>
-<section id="en-la-próxima-clase-veremos" class="slide level2">
-<h2>En la próxima clase veremos</h2>
-<h3 id="análisis-exploratorio-de-series-de-tiempo.">Análisis exploratorio de series de tiempo.</h3>
-<!-- ## Paquetes en R -->
-<!-- Para replicar los ejemplos de esta presentación, necesitan estos paquetes: -->
-<!-- ```{r} -->
-<!-- #| echo: true -->
-<!-- library(ggplot2) -->
-<!-- library(forecast) -->
-<!-- library(fpp2) -->
-<!-- library(astsa) -->
-<!-- library(quantmod) -->
-<!-- library(xts) -->
-<!-- ``` -->
 
-</section></section>
+<img data-src="quartoflow.png" class="r-stretch quarto-figure-center"><p class="caption">Diagrama de Quarto</p></section></section>
+
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">

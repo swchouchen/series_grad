@@ -16,7 +16,8 @@ aplicación, tanto en la investigación como aplicación.
 | Tema | Clase | Laboratorio y materiales extras |
 |-------------------|----------------------------|--------------------------|
 | 1\. Introducción | [Tema 1](./Tema_1/presentacion.html) |  |
-| 2\. Regresión | [Tema 2](./Tema_2/presentacion.html) |  |
+| 2\. Suavizamiento | [Tema 2](./Tema_2/presentacion.html) | [Lab](./Tema_2/lab.html) |
+| 3\. Regresión | [Tema 3](./Tema_3/presentacion.html) |  |
 
 <!-- Tema                      | Clase                        | Laboratorio y materiales extras -->
 <!-- ------------------------- | -----------------------------|------------------------------- -->

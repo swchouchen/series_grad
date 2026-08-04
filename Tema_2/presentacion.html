@@ -11,7 +11,7 @@
   <meta name="generator" content="quarto-1.9.38">
 
   <meta name="author" content="Shu Wei Chou Chen">
-  <title>Tema 2: Regresión con series de tiempo</title>
+  <title>Tema 2: Técnicas de suavizamiento exponencial</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -199,7 +199,7 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Tema 2: Regresión con series de tiempo</h1>
+  <h1 class="title">Tema 2: Técnicas de suavizamiento exponencial</h1>
   <p class="subtitle"><a href="https://swchouchen.github.io/series_grad">Curso: Series Cronológicas I</a></p>
 
 <div class="quarto-title-authors">
@@ -226,12 +226,7 @@
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a><span class="fu">library</span>(ggplot2)</span>
 <span id="cb1-2"><a href=""></a><span class="fu">library</span>(forecast)</span>
 <span id="cb1-3"><a href=""></a><span class="fu">library</span>(fpp2)</span>
-<span id="cb1-4"><a href=""></a><span class="fu">library</span>(astsa)</span>
-<span id="cb1-5"><a href=""></a><span class="fu">library</span>(car)</span>
-<span id="cb1-6"><a href=""></a><span class="fu">library</span>(astsa)</span>
-<span id="cb1-7"><a href=""></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb1-8"><a href=""></a><span class="fu">library</span>(gamair)</span>
-<span id="cb1-9"><a href=""></a><span class="fu">library</span>(mgcv)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-4"><a href=""></a><span class="fu">library</span>(astsa)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section>
@@ -246,19 +241,22 @@
 <p>Introducción</p>
 </div></li>
 <li><div class="agenda-inactive agenda-post-active">
-<p>Modelos de regresión</p>
+<p>Suavizamiento exponencial simple (SES)</p>
 </div></li>
 <li><div class="agenda-inactive agenda-post-active">
-<p>Regresión espuria</p>
+<p>El método lineal de Holt</p>
 </div></li>
 <li><div class="agenda-inactive agenda-post-active">
-<p>El tiempo como covariables</p>
+<p>El método lineal de Holt amortiguado</p>
 </div></li>
 <li><div class="agenda-inactive agenda-post-active">
-<p>Pronósticos usando regresión</p>
+<p>El método multiplicativo y aditivo de Holt-Winters</p>
 </div></li>
 <li><div class="agenda-inactive agenda-post-active">
-<p>Extensiones de modelos de regresión</p>
+<p>Taxonomía de los métodos de SE</p>
+</div></li>
+<li><div class="agenda-inactive agenda-post-active">
+<p>Representación como modelos de Espacio de Estados</p>
 </div></li>
 </ol>
 </div>
@@ -266,17 +264,19 @@
 <section id="introducción-1" class="slide level2">
 <h2>Introducción</h2>
 <ul>
-<li><p>La idea es ajustar un modelo de regresión para la serie temporal <span class="math inline">\(Y_t, t=1,...,T\)</span> utlizando un conjunto de <span class="math inline">\(p\)</span> covariables: <span class="math inline">\(X_1,...,X_p\)</span>.</p></li>
-<li><p>Por ejemplo:</p>
-<ul>
-<li><span class="math inline">\(Y\)</span> una serie mensual de ventas con la variable independiente <span class="math inline">\(X_1\)</span> gasto mensual en anuncios.</li>
-<li><span class="math inline">\(Y\)</span> una serie diaria de demanda de energía eléctrica con las variables independientes: <span class="math inline">\(X_1\)</span> temperatura y <span class="math inline">\(X_2\)</span> el día de la semana.</li>
-</ul></li>
+<li><p>Desarrollados en los años 1950s.</p></li>
+<li><p>Son aplicados ampliamente debido a su sencillez y bajo costo.</p></li>
+<li><p>Pueden ser utilizados para pocas observaciones.</p>
+<ol type="1">
+<li>Suavizamiento exponencial simple (SES)</li>
+<li>Método lineal de Holt (con tendencia)</li>
+<li>Métodos multiplicativo y aditivo de Holt-Winters (con estacionalidad)</li>
+</ol></li>
 </ul>
 </section></section>
 <section>
-<section id="modelos-de-regresión" class="title-slide slide level1 agenda-slide center">
-<h1>Modelos de regresión</h1>
+<section id="suavizamiento-exponencial-simple-ses" class="title-slide slide level1 agenda-slide center">
+<h1>Suavizamiento exponencial simple (SES)</h1>
 <div class="agenda-heading">
 <p>Contenido</p>
 </div>
@@ -286,262 +286,76 @@
 <p>Introducción</p>
 </div></li>
 <li><div class="agenda-active">
-<p>Modelos de regresión</p>
+<p>Suavizamiento exponencial simple (SES)</p>
 </div></li>
 <li><div class="agenda-inactive agenda-post-active">
-<p>Regresión espuria</p>
+<p>El método lineal de Holt</p>
 </div></li>
 <li><div class="agenda-inactive agenda-post-active">
-<p>El tiempo como covariables</p>
+<p>El método lineal de Holt amortiguado</p>
 </div></li>
 <li><div class="agenda-inactive agenda-post-active">
-<p>Pronósticos usando regresión</p>
+<p>El método multiplicativo y aditivo de Holt-Winters</p>
 </div></li>
 <li><div class="agenda-inactive agenda-post-active">
-<p>Extensiones de modelos de regresión</p>
+<p>Taxonomía de los métodos de SE</p>
+</div></li>
+<li><div class="agenda-inactive agenda-post-active">
+<p>Representación como modelos de Espacio de Estados</p>
 </div></li>
 </ol>
 </div>
 </section>
-<section id="regresión-lineal-simple" class="slide level2">
-<h2>Regresión lineal simple</h2>
-<p>Un modelo de regresión lineal simple establece una relación lineal entre una variable dependiente <span class="math inline">\(Y\)</span> y una sola variable predictora <span class="math inline">\(X\)</span>:</p>
-<p><span class="math display">\[
-  Y_t = \beta_0 + \beta_1 X_t + \epsilon_t,
-\]</span> donde los coeficientes <span class="math inline">\(\beta_0\)</span> y <span class="math inline">\(\beta_1\)</span> denotan la intersección y la pendientes, respectivamente;<br>
-<span class="math inline">\(\varepsilon_t \overset{\text{iid}}{\sim} N(0,\sigma^2)\)</span>.</p>
+<section id="suavizamiento-exponencial-simple-ses-1" class="slide level2">
+<h2>Suavizamiento exponencial simple (SES)</h2>
 <ul>
-<li>La intercepción <span class="math inline">\(\beta_0\)</span> representa el valor predicho de <span class="math inline">\(y\)</span> cuando <span class="math inline">\(X=0\)</span>.</li>
-<li>La pendiente <span class="math inline">\(\beta_1\)</span> representa el cambio promedio previsto en <span class="math inline">\(Y\)</span> resultante de un aumento de una unidad en <span class="math inline">\(X\)</span>.</li>
-</ul>
-</section>
-<section class="slide level2">
-
-
-<img data-src="presentacion_files/figure-revealjs/unnamed-chunk-2-1.png" width="384" class="r-stretch quarto-figure-center"><p class="caption">Ejemplo simulado de un modelo de regresión lineal simple (Fig 5.1 de Hyndman)</p></section>
-<section id="ejemplo" class="slide level2">
-<h2>Ejemplo</h2>
+<li><p>Es apropiada para serie que no tienen patrones estacionales ni de tendencia, y cuya media o nivel cambia lentamente.</p></li>
+<li><p>Notación:</p>
 <ul>
-<li>La serie de cambios porcentuales trimestrales (tasas de crecimiento) del gasto de consumo personal real (<span class="math inline">\(Y_t\)</span>, variable dependiente), y el cambio porcentual de los ingresos disponibles(<span class="math inline">\(X_t\)</span>, covariable), para EE.UU. desde 1970 a 2016.</li>
-</ul>
-<div class="columns">
-<div class="column" style="width:50%;">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href=""></a><span class="fu">head</span>(uschange)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>        Consumption     Income Production   Savings Unemployment
-1970 Q1   0.6159862  0.9722610 -2.4527003 4.8103115          0.9
-1970 Q2   0.4603757  1.1690847 -0.5515251 7.2879923          0.5
-1970 Q3   0.8767914  1.5532705 -0.3587079 7.2890131          0.5
-1970 Q4  -0.2742451 -0.2552724 -2.1854549 0.9852296          0.7
-1971 Q1   1.8973708  1.9871536  1.9097341 3.6577706         -0.1
-1971 Q2   0.9119929  1.4473342  0.9015358 6.0513418         -0.1</code></pre>
-</div>
-</div>
-</div><div class="column" style="width:50%;">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href=""></a><span class="fu">autoplot</span>(uschange[,<span class="fu">c</span>(<span class="st">"Consumption"</span>,<span class="st">"Income"</span>)]) <span class="sc">+</span></span>
-<span id="cb4-2"><a href=""></a>  <span class="fu">ylab</span>(<span class="st">"% change"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Year"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-4-1.png" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-</div></div>
-</section>
-<section class="slide level2">
-
-<div class="columns">
-<div class="column" style="width:50%;">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href=""></a>uschange <span class="sc">%&gt;%</span></span>
-<span id="cb5-2"><a href=""></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb5-3"><a href=""></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>Income, <span class="at">y=</span>Consumption)) <span class="sc">+</span></span>
-<span id="cb5-4"><a href=""></a>    <span class="fu">ylab</span>(<span class="st">"Consumption (quarterly % change)"</span>) <span class="sc">+</span></span>
-<span id="cb5-5"><a href=""></a>    <span class="fu">xlab</span>(<span class="st">"Income (quarterly % change)"</span>) <span class="sc">+</span></span>
-<span id="cb5-6"><a href=""></a>    <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb5-7"><a href=""></a>    <span class="fu">geom_smooth</span>(<span class="at">method=</span><span class="st">"lm"</span>, <span class="at">se=</span><span class="cn">FALSE</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-5-1.png" width="384"></p>
-</figure>
-</div>
-</div>
-</div>
-<ul>
-<li>Más adelante vemos que <code>tslm</code> es programado para series temporales, pero el cálculo es lo mismo.</li>
-</ul>
-</div><div class="column" style="width:50%;">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href=""></a><span class="fu">lm</span>(Consumption <span class="sc">~</span> Income, <span class="at">data=</span>uschange)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-Call:
-lm(formula = Consumption ~ Income, data = uschange)
-
-Coefficients:
-(Intercept)       Income  
-     0.5451       0.2806  </code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href=""></a><span class="fu">tslm</span>(Consumption <span class="sc">~</span> Income, <span class="at">data=</span>uschange)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-Call:
-tslm(formula = Consumption ~ Income, data = uschange)
-
-Coefficients:
-(Intercept)       Income  
-     0.5451       0.2806  </code></pre>
-</div>
-</div>
-<p><span class="math display">\[Y_t=0.55 + 0.28X_t + \epsilon_t\]</span></p>
-<ul>
-<li>El coeficiente de pendiente muestra que un aumento de una unidad en <span class="math inline">\(X\)</span>(un aumento de 1 punto porcentual en el ingreso personal disponible) resulta en un promedio de 0.28 unidades de aumento en <span class="math inline">\(Y\)</span>.</li>
-</ul>
-</div></div>
-</section>
-<section id="regresión-lineal-múltiple" class="slide level2">
-<h2>Regresión lineal múltiple</h2>
-<ul>
-<li>La forma general de un modelo de regresión lineal múltiple es:</li>
-</ul>
-<p><span class="math display">\[Y_t=\beta_0+\beta_1 X_{t,1}+\beta_2 X_{t,2}+...+\beta_p X_{t,p}+\epsilon_t, t=1,...,T,\]</span></p>
-<p>donde <span class="math inline">\(Y_t\)</span> es la variable a pronosticar y <span class="math inline">\(X_1,...,X_p\)</span> son los <span class="math inline">\(p\)</span> variables predictoras. Las variables predictoras pueden ser numéricas o categóricas (con el manejo apropiado de factores).<br>
-Los coeficientes <span class="math inline">\(\beta_1,...,\beta_p\)</span> miden el efecto de cada predictor después de tener en cuenta los efectos de todos los demás predictores del modelo. Por lo tanto, los coeficientes miden los efectos marginales de las variables predictoras.</p>
-</section>
-<section class="slide level2">
-
-<ul>
-<li>El modelo de regresión lineal múltiple en su forma matricial:</li>
-</ul>
-<p><span class="math display">\[
-Y=X \beta+\epsilon
-\]</span> donde</p>
-<p><span class="math display">\[Y=\left[ \begin{array}{c}Y_1 \\ \vdots \\Y_T \end{array}  \right],~~ X= \left(\begin{array}{ccccc} 1&amp; X_{11}&amp; X_{12} &amp; ... &amp; X_{1p}\\ 1 &amp;  X_{21}&amp; X_{22} &amp; ... &amp;X_{2p}\\ \vdots&amp; \vdots &amp; \ddots &amp;\vdots&amp; \vdots\\ 1&amp;  X_{T1}&amp; X_{T2} &amp; ... &amp;X_{Tp} \end{array}\right),\]</span> <span class="math display">\[\beta=\left[ \begin{array}{c}\beta_0 \\ \vdots \\\beta_T \end{array}  \right],~~\epsilon=\left[ \begin{array}{c}\epsilon_1 \\ \vdots \\\epsilon_T \end{array}  \right].\]</span></p>
-</section>
-<section class="slide level2">
-
-<p><strong>Supocisiones del modelo:</strong></p>
-<ul>
-<li><p>La relación entre la variable de pronóstico y las variables predictoras satisface esta ecuación lineal.</p></li>
-<li><p>Los errores <span class="math inline">\(\varepsilon_1,...,\varepsilon_T\)</span>:</p>
-<ul>
-<li>tienen media cero,</li>
-<li>no están autocorrelacionados,</li>
-<li>no están relacionados con las variables predictoras</li>
+<li><span class="math inline">\(Z_t\)</span>: la observación de la serie en el tiempo <span class="math inline">\(t\)</span>.</li>
+<li><span class="math inline">\(P_t\)</span>: el pronóstico del tiempo <span class="math inline">\(t\)</span>.</li>
+<li><span class="math inline">\(Z_t-P_t\)</span>: el error de pronóstico.</li>
 </ul></li>
-<li><p>Los errores se distribuyan normalmente con una varianza constante <span class="math inline">\(\sigma^2\)</span>.</p></li>
-<li><p>Cada predictor <span class="math inline">\(X_i, i=1,...,p\)</span> supone que es observado y fijo, i.e.&nbsp;no es una variable aleatoria.</p></li>
-</ul>
-</section>
-<section class="slide level2">
-
-<p><strong>Tópicos importantes:</strong></p>
+<li><p>El método de SES consiste en: <span class="math display">\[P_{t+1}=P_t+\alpha (Z_t-P_t)\]</span> donde <span class="math inline">\(0\leq \alpha\leq1\)</span> es el parámetro de suavizamiento.<br></p>
 <ul>
-<li>Estimación:
-<ul>
-<li>Por mínimos cuadrados.</li>
-<li>Por máxima verosimilitud.</li>
+<li>El pronóstico en el tiempo <span class="math inline">\(t+1\)</span> es una combinación del pronóstico en el tiempo <span class="math inline">\(t\)</span> y una proporción <span class="math inline">\(\alpha\)</span> el error de pronóstico del tiempo <span class="math inline">\(t\)</span>.</li>
 </ul></li>
-<li>Selección de variables</li>
-<li>Diagnósticos</li>
-<li>Medidas remediales</li>
 </ul>
 </section>
 <section class="slide level2">
 
 <ul>
-<li><p><span class="alert">Estimación por mínimos cuadrados:</span> minimizar <span class="math display">\[\sum_{t=1}^T \epsilon_t^2=\sum_{t=1}^T [y_t-(\beta_0+\beta_1 x_{1,t}+...+\beta_k x_{k,t})]^2,\]</span> en función de <span class="math inline">\(\beta_0,...\beta_k\)</span>.</p></li>
-<li><p>Como resultado: <span class="math display">\[\hat{\beta}=(X^\top X)^{-1}X^\top Y.\]</span></p></li>
-<li><p><span class="alert">El estimador de máxima verosimilitud</span> es equivalente.</p></li>
+<li><p>Note que la ecuación anterior es equivalente a: <span class="math display">\[P_{t+1}=\alpha Z_t + (1-\alpha)~ P_t\]</span> i.e., el pronóstico en el tiempo <span class="math inline">\(t+1\)</span> es un promedio ponderado de la observación más reciente y el pronóstico en el tiempo <span class="math inline">\(t\)</span>.</p></li>
+<li><p>Recursivamente se obtienen: <span class="math display">\[\begin{align*}
+P_{t+1}
+&amp;= \alpha Z_t + (1 - \alpha) \left[ \alpha Z_{t-1} + (1 - \alpha) P_{t-1} \right] \\
+&amp;= \alpha Z_t + \alpha (1 - \alpha) Z_{t-1} + (1 - \alpha)^2 P_{t-1} \\
+&amp;= \alpha Z_t + \alpha (1 - \alpha) Z_{t-1} + \alpha (1 - \alpha)^2 Z_{t-2} + \cdots \\
+&amp;\quad\quad\quad\quad\quad\quad + \alpha (1 - \alpha)^{t-1} Z_1 + (1 - \alpha)^t P_1.
+\end{align*}\]</span></p></li>
+<li><p>Los coeficientes <span class="math inline">\(\alpha, \alpha (1-\alpha)^2,..., \alpha (1-\alpha)^t\)</span> decrecen exponencialmente.</p></li>
+<li><p>El pronóstico <span class="math inline">\(P_{t+1}\)</span> es un promedio ponderado de las observaciones pasadas <span class="math inline">\(Z_t,...,Z_1\)</span> ya que <span class="math inline">\((1-\alpha)^t P_{1}\)</span> es casi nulo.</p></li>
 </ul>
 </section>
-<section id="ejemplo-1" class="slide level2">
-<h2>Ejemplo</h2>
+<section class="slide level2">
+
 <ul>
-<li>El objetivo es generar pronósticos del consumo más precisos usando otros predictores, además del ingreso personal.</li>
+<li><p>En la práctica, <span class="math inline">\(\alpha\)</span> es desconocido.</p></li>
+<li><p>La idea es realizar SES con diferentes valores de <span class="math inline">\(\alpha\)</span> y seleccionar el valor de <span class="math inline">\(\alpha\)</span> que minimiza la suma de los cuadrados de los errores de pronóstico, o el MSE. <span class="math display">\[\operatorname{MSE}=\frac{\sum\limits_{t=1}^T \left( Z_t-P_t \right)^2}{T}.\]</span></p></li>
+<li><p>Además de <span class="math inline">\(\alpha\)</span>, la selección de los valores iniciales (<span class="math inline">\(P_1\)</span>) es importante.</p></li>
 </ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href=""></a><span class="fu">autoplot</span>(uschange[,<span class="dv">3</span><span class="sc">:</span><span class="dv">5</span>], <span class="at">facets =</span> <span class="cn">TRUE</span>, <span class="at">colour=</span><span class="cn">TRUE</span>) <span class="sc">+</span></span>
-<span id="cb10-2"><a href=""></a>  <span class="fu">ylab</span>(<span class="st">""</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Year"</span>) <span class="sc">+</span></span>
-<span id="cb10-3"><a href=""></a>  <span class="fu">guides</span>(<span class="at">colour=</span><span class="st">"none"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
-
-</div>
-<img data-src="presentacion_files/figure-revealjs/unnamed-chunk-7-1.png" width="384" class="r-stretch quarto-figure-center"><p class="caption">Variaciones porcentuales trimestrales en la producción industrial y ahorros personales y variaciones trimestrales en la tasa de desempleo de los EE. UU. Durante el período 1970T1-2016T3 (Hyndman)</p></section>
-<section class="slide level2">
-
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href=""></a>uschange <span class="sc">%&gt;%</span></span>
-<span id="cb11-2"><a href=""></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb11-3"><a href=""></a>  GGally<span class="sc">::</span><span class="fu">ggpairs</span>()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
-
-</div>
-<img data-src="presentacion_files/figure-revealjs/unnamed-chunk-8-1.png" width="480" class="r-stretch quarto-figure-center"><p class="caption">Matriz de diagrama de dispersión del gasto de consumo de EE. UU. y los cuatro predictores.</p></section>
-<section class="slide level2">
-
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href=""></a>modreg <span class="ot">&lt;-</span> <span class="fu">tslm</span>(</span>
-<span id="cb12-2"><a href=""></a>  Consumption <span class="sc">~</span> Income <span class="sc">+</span> Production <span class="sc">+</span> Unemployment <span class="sc">+</span> Savings,</span>
-<span id="cb12-3"><a href=""></a>  <span class="at">data=</span>uschange)</span>
-<span id="cb12-4"><a href=""></a><span class="fu">summary</span>(modreg)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-Call:
-tslm(formula = Consumption ~ Income + Production + Unemployment + 
-    Savings, data = uschange)
-
-Residuals:
-     Min       1Q   Median       3Q      Max 
--0.88296 -0.17638 -0.03679  0.15251  1.20553 
-
-Coefficients:
-             Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)   0.26729    0.03721   7.184 1.68e-11 ***
-Income        0.71449    0.04219  16.934  &lt; 2e-16 ***
-Production    0.04589    0.02588   1.773   0.0778 .  
-Unemployment -0.20477    0.10550  -1.941   0.0538 .  
-Savings      -0.04527    0.00278 -16.287  &lt; 2e-16 ***
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-Residual standard error: 0.3286 on 182 degrees of freedom
-Multiple R-squared:  0.754, Adjusted R-squared:  0.7486 
-F-statistic: 139.5 on 4 and 182 DF,  p-value: &lt; 2.2e-16</code></pre>
-</div>
-</div>
 </section>
 <section class="slide level2">
 
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href=""></a><span class="fu">autoplot</span>(uschange[,<span class="st">'Consumption'</span>], <span class="at">series=</span><span class="st">"Data"</span>) <span class="sc">+</span></span>
-<span id="cb14-2"><a href=""></a>  forecast<span class="sc">::</span><span class="fu">autolayer</span>(<span class="fu">fitted</span>(modreg), <span class="at">series=</span><span class="st">"Fitted"</span>) <span class="sc">+</span></span>
-<span id="cb14-3"><a href=""></a>  <span class="fu">xlab</span>(<span class="st">"Year"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">""</span>) <span class="sc">+</span></span>
-<span id="cb14-4"><a href=""></a>  <span class="fu">ggtitle</span>(<span class="st">"Cambio porcentual de gastos de consumo en EE.UUU "</span>) <span class="sc">+</span></span>
-<span id="cb14-5"><a href=""></a>  <span class="fu">guides</span>(<span class="at">colour=</span><span class="fu">guide_legend</span>(<span class="at">title=</span><span class="st">" "</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li>Ejemplo 3.1 de Hernández (2011): Serie mensual de defunciones de Costa Rica de los años 2001 y 2002.</li>
+</ul>
 
-</div>
-<img data-src="presentacion_files/figure-revealjs/unnamed-chunk-10-1.png" width="672" class="r-stretch"></section>
-<section class="slide level2">
-
-<div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href=""></a><span class="fu">checkresiduals</span>(modreg)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
-
-<div class="cell-output cell-output-stdout">
-<pre><code>
-    Breusch-Godfrey test for serial correlation of order up to 8
-
-data:  Residuals from Linear regression model
-LM test = 14.874, df = 8, p-value = 0.06163</code></pre>
-</div>
-</div>
-<img data-src="presentacion_files/figure-revealjs/unnamed-chunk-11-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:50.0%"></section></section>
+<img data-src="presentacion_files/figure-revealjs/unnamed-chunk-2-1.png" width="384" class="r-stretch"><p><a href="./defunciones_SES.xlsx"><span class="button">Procedimiento en excel</span></a> y <a href="./lab.html#suavizamiento-exponencial-simple"><span class="button">el Lab</span></a></p>
+</section></section>
 <section>
-<section id="regresión-espuria" class="title-slide slide level1 agenda-slide center">
-<h1>Regresión espuria</h1>
+<section id="el-método-lineal-de-holt" class="title-slide slide level1 agenda-slide center">
+<h1>El método lineal de Holt</h1>
 <div class="agenda-heading">
 <p>Contenido</p>
 </div>
@@ -551,77 +365,501 @@ LM test = 14.874, df = 8, p-value = 0.06163</code></pre>
 <p>Introducción</p>
 </div></li>
 <li><div class="agenda-inactive agenda-pre-active">
-<p>Modelos de regresión</p>
+<p>Suavizamiento exponencial simple (SES)</p>
 </div></li>
 <li><div class="agenda-active">
-<p>Regresión espuria</p>
+<p>El método lineal de Holt</p>
 </div></li>
 <li><div class="agenda-inactive agenda-post-active">
-<p>El tiempo como covariables</p>
+<p>El método lineal de Holt amortiguado</p>
 </div></li>
 <li><div class="agenda-inactive agenda-post-active">
-<p>Pronósticos usando regresión</p>
+<p>El método multiplicativo y aditivo de Holt-Winters</p>
 </div></li>
 <li><div class="agenda-inactive agenda-post-active">
-<p>Extensiones de modelos de regresión</p>
+<p>Taxonomía de los métodos de SE</p>
+</div></li>
+<li><div class="agenda-inactive agenda-post-active">
+<p>Representación como modelos de Espacio de Estados</p>
 </div></li>
 </ol>
 </div>
 </section>
-<section id="regresión-espuria-1" class="slide level2">
-<h2>Regresión espuria</h2>
+<section id="el-método-lineal-de-holt-1" class="slide level2 smaller">
+<h2>El método lineal de Holt</h2>
+<ul>
+<li>El método de Holt sirve para series con tendencia.</li>
+<li>El suavizamiento exponencial de Holt utiliza 3 ecuaciones y dos parámetros ( <span class="math inline">\(0 \leq \alpha \leq 1\)</span> y <span class="math inline">\(0 \leq \beta \leq 1\)</span>):</li>
+</ul>
+<p><span class="alert">Ecuación del nivel:</span> <span class="math inline">\(~~~~~~~~~~~~~l_{t}=\alpha Z_{t} + (1-\alpha)~ (l_{t-1}+b_{t-1})\)</span></p>
+<p><span class="alert">Ecuación de la pendiente:</span> <span class="math inline">\(~~~~b_{t}=\beta (l_t-l_{t-1}) + (1-\beta)~ b_{t-1}\)</span></p>
+<p><span class="alert">Ecuación del pronóstico:</span> <span class="math inline">\(~~~~~P_{t+m}=l_t+b_t m\)</span></p>
+<ul>
+<li><p><span class="math inline">\(l_t\)</span> es una estimación del nivel promedio de <span class="math inline">\(Z_t\)</span>.</p>
+<ul>
+<li>Es un promedio ponderado del valor de <span class="math inline">\(Z_t\)</span> y una estimación del nivel de la serie en <span class="math inline">\(t\)</span>.</li>
+</ul></li>
+<li><p><span class="math inline">\(b_t\)</span> es una estimación de la pendiente de <span class="math inline">\(Z_t\)</span>.</p>
+<ul>
+<li>es un promedio ponderado del aumento del nivel de la serie entre <span class="math inline">\(t\)</span> y <span class="math inline">\(t-1\)</span>, y una estimación de la pendiente en el tiempo <span class="math inline">\(t-1\)</span>.</li>
+</ul></li>
+<li><p>La última ecuación pronostica el valor de <span class="math inline">\(Z_{t+m}\)</span>, i.e., pronóstico a <span class="math inline">\(m\)</span> paso para adelante.</p></li>
+<li><p>Es conocido como <span class="alert">suavizamiento exponencial doble</span>.</p></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li>Al igual que SES, los valores de <span class="math inline">\(\alpha\)</span> y <span class="math inline">\(\beta\)</span> se obtienen minimizando la suma de los cuadrados de los errores de pronóstico, o el MSE. <span class="math display">\[\operatorname{MSE}=\frac{\sum\limits_{i=1}^T \left( Z_t-P_t \right)^2}{T} \]</span></li>
+<li>Además de <span class="math inline">\(\alpha\)</span> y <span class="math inline">\(\beta\)</span>, la selección de los valores iniciales (<span class="math inline">\(l_1\)</span> y <span class="math inline">\(b_1\)</span>) es importante.</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li>Ejemplo 3.2 de Hernández (2011): Serie de graduados del ITCR de 1975-2002.</li>
+</ul>
+
+<img data-src="presentacion_files/figure-revealjs/unnamed-chunk-3-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:35.0%"><p><a href="./ITCR_Holt.xlsx"><span class="button">Procedimiento en excel</span></a> y <a href="./lab.html#método-de-holt"><span class="button">el Lab</span></a></p>
+</section></section>
+<section>
+<section id="el-método-lineal-de-holt-amortiguado" class="title-slide slide level1 agenda-slide center">
+<h1>El método lineal de Holt amortiguado</h1>
+<div class="agenda-heading">
+<p>Contenido</p>
+</div>
+<div class="agenda">
+<ol>
+<li><div class="agenda-inactive agenda-pre-active">
+<p>Introducción</p>
+</div></li>
+<li><div class="agenda-inactive agenda-pre-active">
+<p>Suavizamiento exponencial simple (SES)</p>
+</div></li>
+<li><div class="agenda-inactive agenda-pre-active">
+<p>El método lineal de Holt</p>
+</div></li>
+<li><div class="agenda-active">
+<p>El método lineal de Holt amortiguado</p>
+</div></li>
+<li><div class="agenda-inactive agenda-post-active">
+<p>El método multiplicativo y aditivo de Holt-Winters</p>
+</div></li>
+<li><div class="agenda-inactive agenda-post-active">
+<p>Taxonomía de los métodos de SE</p>
+</div></li>
+<li><div class="agenda-inactive agenda-post-active">
+<p>Representación como modelos de Espacio de Estados</p>
+</div></li>
+</ol>
+</div>
+</section>
+<section id="el-método-lineal-de-holt-amortiguado-1" class="slide level2 smaller">
+<h2>El método lineal de Holt amortiguado</h2>
+<ul>
+<li><strong>Crítica:</strong> el método lineal de Holt supone una tendencia constante a futuro.</li>
+<li>Pronósticos a largo plazo no son prácticos.</li>
+<li><a href="https://doi.org/10.1287/mnsc.31.10.1237">Gardner &amp; McKenzie (1985)</a> introdujo un parámetro adicional para amortiguar esa tendencia constante.</li>
+</ul>
+<p><span class="alert">Ecuación del nivel:</span> <span class="math inline">\(~~~~~~~~~~~~~l_{t}=\alpha Z_{t} + (1-\alpha)~ (l_{t-1}+\phi b_{t-1})\)</span></p>
+<p><span class="alert">Ecuación de la pendiente:</span> <span class="math inline">\(~~~~b_{t}=\beta (l_t-l_{t-1}) + (1-\beta)~ \phi b_{t-1}\)</span></p>
+<p><span class="alert">Ecuación del pronóstico:</span> <span class="math inline">\(~~~~~P_{t+m}=l_t+ (\phi+\phi^2+...+\phi^m)~b_t\)</span></p>
+<ul>
+<li>Si <span class="math inline">\(\phi=1\)</span>, se tiene el método lineal de Holt.</li>
+<li>Para <span class="math inline">\(0&lt;\phi&lt;1\)</span>, el pronóstico converge a <span class="math inline">\(l_t+ \frac{\phi}{1-\phi}~b_t\)</span>, cuando <span class="math inline">\(m \rightarrow \infty\)</span>.</li>
+<li>Es decir, el pronóstico a corto plazo es con tendencia pero a largo plazo es constante.</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href=""></a>holt1 <span class="ot">&lt;-</span> <span class="fu">holt</span>(y, <span class="at">h=</span><span class="dv">15</span>)</span>
+<span id="cb2-2"><a href=""></a>holt2 <span class="ot">&lt;-</span> <span class="fu">holt</span>(y, <span class="at">damped=</span><span class="cn">TRUE</span>, <span class="at">phi =</span> <span class="fl">0.9</span>, <span class="at">h=</span><span class="dv">15</span>)</span>
+<span id="cb2-3"><a href=""></a>holt3 <span class="ot">&lt;-</span> <span class="fu">holt</span>(y, <span class="at">damped=</span><span class="cn">TRUE</span>, <span class="at">h=</span><span class="dv">15</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
 <div class="columns">
 <div class="column" style="width:50%;">
-<ul>
-<li>Cuando las series no son estacionarias<sup>1</sup>, los resultados de regresión no son confiables y presenta lo que se llama <span class="alert">correlación espuria</span>.</li>
-</ul>
-<ul>
-<li><p>Los datos de las series cronológicas de tendencias pueden parecer relacionados.</p></li>
-<li><p>Por ejemplo, los pasajeros aéreos en Australia tienen una correlación positiva con la producción de arroz en Guinea.</p></li>
-</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href=""></a>holt2<span class="sc">$</span>model</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Damped Holt's method 
+
+Call:
+holt(y = y, h = 15, damped = TRUE, phi = 0.9)
+
+  Smoothing parameters:
+    alpha = 0.2341 
+    beta  = 0.2341 
+    phi   = 0.9 
+
+  Initial states:
+    l = 22.8604 
+    b = 22.1418 
+
+  sigma:  87.7573
+
+     AIC     AICc      BIC 
+348.3701 351.0973 355.0311 </code></pre>
+</div>
+</div>
 </div><div class="column" style="width:50%;">
 <div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href=""></a>holt3<span class="sc">$</span>model</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Damped Holt's method 
+
+Call:
+holt(y = y, h = 15, damped = TRUE)
+
+  Smoothing parameters:
+    alpha = 0.2235 
+    beta  = 0.2235 
+    phi   = 0.9633 
+
+  Initial states:
+    l = 23.4845 
+    b = 21.8493 
+
+  sigma:  86.4831
+
+     AIC     AICc      BIC 
+349.5510 353.5510 357.5442 </code></pre>
+</div>
+</div>
+</div></div>
+</section>
+<section class="slide level2">
+
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href=""></a><span class="fu">autoplot</span>(y) <span class="sc">+</span></span>
+<span id="cb7-2"><a href=""></a>  <span class="fu">autolayer</span>(holt1, <span class="at">series=</span><span class="st">"Holt"</span>, <span class="at">PI=</span><span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb7-3"><a href=""></a>  <span class="fu">autolayer</span>(holt3, <span class="at">series=</span><span class="st">"Holt amortiguado"</span>, <span class="at">PI=</span><span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb7-4"><a href=""></a>  <span class="fu">ggtitle</span>(<span class="st">"Pronóstico usando método Holt y Holt amortiguado"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Año"</span>) <span class="sc">+</span></span>
+<span id="cb7-5"><a href=""></a>  <span class="fu">ylab</span>(<span class="st">"Graduados del ITCR (1975-2002)"</span>) <span class="sc">+</span></span>
+<span id="cb7-6"><a href=""></a>  <span class="fu">guides</span>(<span class="at">colour=</span><span class="fu">guide_legend</span>(<span class="at">title=</span><span class="st">"Pronóstico"</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="presentacion_files/figure-revealjs/unnamed-chunk-7-1.png" width="576" class="r-stretch"></section></section>
+<section>
+<section id="el-método-multiplicativo-y-aditivo-de-holt-winters" class="title-slide slide level1 agenda-slide center">
+<h1>El método multiplicativo y aditivo de Holt-Winters</h1>
+<div class="agenda-heading">
+<p>Contenido</p>
+</div>
+<div class="agenda">
+<ol>
+<li><div class="agenda-inactive agenda-pre-active">
+<p>Introducción</p>
+</div></li>
+<li><div class="agenda-inactive agenda-pre-active">
+<p>Suavizamiento exponencial simple (SES)</p>
+</div></li>
+<li><div class="agenda-inactive agenda-pre-active">
+<p>El método lineal de Holt</p>
+</div></li>
+<li><div class="agenda-inactive agenda-pre-active">
+<p>El método lineal de Holt amortiguado</p>
+</div></li>
+<li><div class="agenda-active">
+<p>El método multiplicativo y aditivo de Holt-Winters</p>
+</div></li>
+<li><div class="agenda-inactive agenda-post-active">
+<p>Taxonomía de los métodos de SE</p>
+</div></li>
+<li><div class="agenda-inactive agenda-post-active">
+<p>Representación como modelos de Espacio de Estados</p>
+</div></li>
+</ol>
+</div>
+</section>
+<section id="el-método-multiplicativo-y-aditivo-de-holt-winters-1" class="slide level2">
+<h2>El método multiplicativo y aditivo de Holt-Winters</h2>
+<ul>
+<li><p><a href="https://pubsonline.informs.org/doi/abs/10.1287/mnsc.6.3.324">Winters (1960)</a> extendió el método lineal de Holt para tomar en cuenta la estacionalidad, el cual es conocido como Holt-Winters.</p></li>
+<li><p><span class="alert">Método multiplicativo:</span></p>
+<ul>
+<li>Variación estacional cambia proporcionalmente con el nivel de la serie.</li>
+</ul></li>
+<li><p><span class="alert">Método aditivo:</span></p>
+<ul>
+<li>Variación constante a lo largo de tiempo.</li>
+</ul></li>
+</ul>
+</section>
+<section id="el-método-multiplicativo-de-holt-winters" class="slide level2">
+<h2>El método multiplicativo de Holt-Winters</h2>
+<p><span class="math display">\[l_t= \alpha \frac{Z_t}{S_{t-s}}+(1-\alpha) (l_{t-1}+b_{t-1})\]</span> <span class="math display">\[b_t= \beta (l_t-l_{t-1})+(1-\beta) b_{t-1}\]</span> <span class="math display">\[S_t= \gamma \frac{Z_t}{l_{t-1}+b_{t-1}}+(1-\gamma) S_{t-s}\]</span> <span class="math display">\[P_{t+m}= (l_{t}+b_t~m) S_{t+m-s}\]</span> donde <br> <span class="math inline">\(s\)</span> es la longitud de la estacionalidad, <br> <span class="math inline">\(l_t\)</span> es el nivel de la serie <span class="math inline">\(Z_t\)</span>, <br> <span class="math inline">\(b_t\)</span> es la tendencia, <br> <span class="math inline">\(S_t\)</span> es el componente estacional, <br> <span class="math inline">\(P_{t+m}\)</span> es el pronóstico <span class="math inline">\(m\)</span> pasos adelante y <br> <span class="math inline">\(0&lt;\alpha&lt;1\)</span>, <span class="math inline">\(0&lt;\beta&lt;1\)</span>, <span class="math inline">\(0&lt;\gamma&lt;1\)</span>.</p>
+</section>
+<section class="slide level2">
+
+<p><strong>Valores iniciales:</strong> para <span class="math inline">\(s\)</span> periodos,<br></p>
+<ul>
+<li><p>El nivel <span class="math inline">\(l_t\)</span> se inicia con: <span class="math display">\[l_s=\frac{Z_1+...+Z_s}{s}\]</span> como un promedio de los datos de los primeros <span class="math inline">\(s\)</span> datos.</p></li>
+<li><p>La pendiente <span class="math inline">\(b_t\)</span> se inicia con: <span class="math display">\[b_s=\frac{1}{s}\left[ \frac{Z_{s+1}-Z_1}{s}+\frac{Z_{s+2}-Z_2}{s}+...+\frac{Z_{s+s}-Z_s}{s}   \right]\]</span> <span class="math display">\[=\frac{1}{s}\left[ \frac{Z_{s+1}+...+Z_{s+s}}{s}-\frac{Z_{1}+...+Z_{s}}{s} \right]\]</span> como un promedio de pendientes de cada periodo en los primeros <span class="math inline">\(2s\)</span> periodos.</p></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>Los índices estacionales se inicializan como cociente de los primeros <span class="math inline">\(s\)</span> valores al promedio de los primeros <span class="math inline">\(s\)</span> datos. <span class="math display">\[S_i=\frac{Z_i}{l_s}, \text{ para } i=1,...,s\]</span></p></li>
+<li><p>Ejemplo 3.3 de Hernández (2011): Serie mensual de turistas de 1991-2000.</p></li>
+</ul>
+
+<img data-src="presentacion_files/figure-revealjs/unnamed-chunk-8-1.png" width="672" class="r-stretch"><p><a href="./TuristasHOLT_Winters.xlsx"><span class="button">Procedimiento en excel</span></a> y <a href="./lab.html#método-multiplicativo-de-holt-winters"><span class="button">el Lab</span></a></p>
+</section>
+<section id="el-método-aditivo-de-holt-winters" class="slide level2">
+<h2>El método aditivo de Holt-Winters</h2>
+<p><span class="math display">\[l_t= \alpha (Z_t-S_{t-s})+(1-\alpha) (l_{t-1}+b_{t-1})\]</span> <span class="math display">\[b_t= \beta (l_t-l_{t-1})+(1-\beta) b_{t-1}\]</span> <span class="math display">\[S_t= \gamma \left( Z_t-l_{t-1}-b_{t-1} \right)+(1-\gamma) S_{t-s}\]</span> <span class="math display">\[P_{t+m}= l_{t}+b_t~m + S_{t+m-s}\]</span> donde <br> <span class="math inline">\(s\)</span> es la longitud de la estacionalidad, <br> <span class="math inline">\(l_t\)</span> es el nivel de la serie <span class="math inline">\(Z_t\)</span>, <br> <span class="math inline">\(b_t\)</span> es la tendencia, <br> <span class="math inline">\(S_t\)</span> es el componente estacional, <br> <span class="math inline">\(P_{t+m}\)</span> es el pronóstico <span class="math inline">\(m\)</span> pasos adelante y <br> <span class="math inline">\(0&lt;\alpha&lt;1\)</span>, <span class="math inline">\(0&lt;\beta&lt;1\)</span>, <span class="math inline">\(0&lt;\gamma&lt;1\)</span>.</p>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>Los índices estacionales se inicializan como cociente de los primeros <span class="math inline">\(s\)</span> valores al promedio de los primeros <span class="math inline">\(s\)</span> datos. <span class="math display">\[S_i=Z_i-a_s, \text{ para } i=1,...,s\]</span></p></li>
+<li><p>Existen otras inicializaciones como el procedimiento basado en regresión (Bowerman, O’Connell and Koehler, 2005).</p>
+<ul>
+<li>asumir tendencia lineal de las primeras observaciones (típicamente 3 o 4 años), y usa el intercepto como <span class="math inline">\(l_0\)</span> y pendiente como <span class="math inline">\(b_0\)</span>.</li>
+</ul></li>
+<li><p>Hasta los últimos años siguen proponiendo nuevos métodos.</p></li>
+</ul>
+</section>
+<section id="comparación-entre-el-aditivo-y-multiplicativo-de-h-w" class="slide level2">
+<h2>Comparación entre el aditivo y multiplicativo de H-W</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href=""></a>ht1 <span class="ot">&lt;-</span> <span class="fu">hw</span>(y,<span class="at">seasonal=</span><span class="st">"multiplicative"</span>)</span>
+<span id="cb8-2"><a href=""></a>ht2 <span class="ot">&lt;-</span> <span class="fu">hw</span>(y,<span class="at">seasonal=</span><span class="st">"additive"</span>)</span>
+<span id="cb8-3"><a href=""></a><span class="fu">autoplot</span>(y) <span class="sc">+</span></span>
+<span id="cb8-4"><a href=""></a>  <span class="fu">autolayer</span>(ht1, <span class="at">series=</span><span class="st">"HW multiplicativo"</span>, <span class="at">PI=</span><span class="cn">FALSE</span>, <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb8-5"><a href=""></a>  <span class="fu">autolayer</span>(ht2, <span class="at">series=</span><span class="st">"HW aditivo"</span>, <span class="at">PI=</span><span class="cn">FALSE</span>, <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb8-6"><a href=""></a>  <span class="fu">xlab</span>(<span class="st">"año"</span>) <span class="sc">+</span></span>
+<span id="cb8-7"><a href=""></a>  <span class="fu">ylab</span>(<span class="st">"turistas"</span>) <span class="sc">+</span></span>
+<span id="cb8-8"><a href=""></a>  <span class="fu">ggtitle</span>(<span class="st">"Turistas que ingresaron a CR"</span>) <span class="sc">+</span></span>
+<span id="cb8-9"><a href=""></a>  <span class="fu">guides</span>(<span class="at">colour=</span><span class="fu">guide_legend</span>(<span class="at">title=</span><span class="st">"pronóstico"</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-12-1.png" width="480"></p>
+<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-9-1.png" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
+</div><div class="column" style="width:50%;">
+<p>Comparación de las medidas de precisión.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href=""></a><span class="fu">accuracy</span>(ht1)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                    ME     RMSE      MAE        MPE     MAPE      MASE
+Training set -114.3084 3239.923 2580.033 -0.3986991 3.995136 0.4245259
+                    ACF1
+Training set 0.008128625</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href=""></a><span class="fu">accuracy</span>(ht2)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                   ME     RMSE      MAE        MPE     MAPE      MASE
+Training set -394.643 4297.824 3312.546 -0.7003905 5.216058 0.5450557
+                     ACF1
+Training set -0.003603756</code></pre>
+</div>
+</div>
 </div></div>
-<aside><ol class="aside-footnotes"><li id="fn1"><p>Estacionariedad es un concepto que veremos en el siguiente tema y significa que la serie varíe con una tendencia constante y variación constante, pero con cierta estructura de autocorrelación.</p></li></ol></aside></section>
+</section>
+<section id="el-método-mult.-de-h-w-amortiguado" class="slide level2 smaller">
+<h2>El método mult. de H-W amortiguado</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><span class="math display">\[l_t= \alpha \frac{Z_t}{S_{t-s}}+(1-\alpha) (l_{t-1}+\phi~b_{t-1})\]</span> <span class="math display">\[b_t= \beta (l_t-l_{t-1})+(1-\beta)~\phi~ b_{t-1}\]</span> <span class="math display">\[S_t= \gamma \frac{Z_t}{l_{t-1}+\phi~b_{t-1}}+(1-\gamma) S_{t-s}\]</span> <span class="math display">\[P_{t+m}= (l_{t}+(\phi+\phi^2+...+\phi^m)~ b_t) S_{t+m-s}\]</span></p>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href=""></a>ht3 <span class="ot">&lt;-</span> <span class="fu">hw</span>(y, <span class="at">damped=</span><span class="cn">TRUE</span>, <span class="at">seasonal=</span><span class="st">"multiplicative"</span>)</span>
+<span id="cb13-2"><a href=""></a>ht3<span class="sc">$</span>model</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Damped Holt-Winters' multiplicative method 
+
+Call:
+hw(y = y, seasonal = "multiplicative", damped = TRUE)
+
+  Smoothing parameters:
+    alpha = 0.66 
+    beta  = 0.024 
+    gamma = 1e-04 
+    phi   = 0.9684 
+
+  Initial states:
+    l = 37734.1221 
+    b = 789.7191 
+    s = 1.1839 0.9441 0.7666 0.7176 0.939 1.0778
+           0.8739 0.8108 0.9503 1.1853 1.2078 1.3431
+
+  sigma:  0.0525
+
+     AIC     AICc      BIC 
+2539.896 2546.668 2590.071 </code></pre>
+</div>
+</div>
+</div></div>
+</section>
 <section class="slide level2">
 
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href=""></a>fit <span class="ot">&lt;-</span> <span class="fu">tslm</span>(aussies <span class="sc">~</span> guinearice)</span>
-<span id="cb17-2"><a href=""></a><span class="fu">summary</span>(fit)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-Call:
-tslm(formula = aussies ~ guinearice)
-
-Residuals:
-    Min      1Q  Median      3Q     Max 
--5.9448 -1.8917 -0.3272  1.8620 10.4210 
-
-Coefficients:
-            Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)   -7.493      1.203  -6.229 2.25e-07 ***
-guinearice    40.288      1.337  30.135  &lt; 2e-16 ***
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-Residual standard error: 3.239 on 40 degrees of freedom
-Multiple R-squared:  0.9578,    Adjusted R-squared:  0.9568 
-F-statistic: 908.1 on 1 and 40 DF,  p-value: &lt; 2.2e-16</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href=""></a><span class="fu">autoplot</span>(y) <span class="sc">+</span></span>
+<span id="cb15-2"><a href=""></a>  <span class="fu">autolayer</span>(ht1, <span class="at">series=</span><span class="st">"HW M"</span>, <span class="at">PI=</span><span class="cn">FALSE</span>, <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb15-3"><a href=""></a>  <span class="fu">autolayer</span>(ht3, <span class="at">series=</span><span class="st">"HW M.amortiguado"</span>, <span class="at">PI=</span><span class="cn">FALSE</span>, <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb15-4"><a href=""></a>  <span class="fu">xlab</span>(<span class="st">"año"</span>) <span class="sc">+</span></span>
+<span id="cb15-5"><a href=""></a>  <span class="fu">ylab</span>(<span class="st">"turistas"</span>) <span class="sc">+</span></span>
+<span id="cb15-6"><a href=""></a>  <span class="fu">ggtitle</span>(<span class="st">"Turistas que ingresaron a CR"</span>) <span class="sc">+</span></span>
+<span id="cb15-7"><a href=""></a>  <span class="fu">guides</span>(<span class="at">colour=</span><span class="fu">guide_legend</span>(<span class="at">title=</span><span class="st">"pronóstico"</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-12-1.png" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 </div><div class="column" style="width:50%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href=""></a><span class="fu">checkresiduals</span>(fit)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href=""></a><span class="fu">accuracy</span>(ht1)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                    ME     RMSE      MAE        MPE     MAPE      MASE
+Training set -114.3084 3239.923 2580.033 -0.3986991 3.995136 0.4245259
+                    ACF1
+Training set 0.008128625</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href=""></a><span class="fu">accuracy</span>(ht2)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                   ME     RMSE      MAE        MPE     MAPE      MASE
+Training set -394.643 4297.824 3312.546 -0.7003905 5.216058 0.5450557
+                     ACF1
+Training set -0.003603756</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href=""></a><span class="fu">accuracy</span>(ht3)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                   ME     RMSE      MAE       MPE     MAPE      MASE
+Training set 309.2038 3213.097 2587.598 0.2712205 3.958626 0.4257708
+                    ACF1
+Training set -0.01930739</code></pre>
+</div>
+</div>
+</div></div>
+</section></section>
+<section>
+<section id="taxonomía-de-los-métodos-de-se" class="title-slide slide level1 agenda-slide center">
+<h1>Taxonomía de los métodos de SE</h1>
+<div class="agenda-heading">
+<p>Contenido</p>
+</div>
+<div class="agenda">
+<ol>
+<li><div class="agenda-inactive agenda-pre-active">
+<p>Introducción</p>
+</div></li>
+<li><div class="agenda-inactive agenda-pre-active">
+<p>Suavizamiento exponencial simple (SES)</p>
+</div></li>
+<li><div class="agenda-inactive agenda-pre-active">
+<p>El método lineal de Holt</p>
+</div></li>
+<li><div class="agenda-inactive agenda-pre-active">
+<p>El método lineal de Holt amortiguado</p>
+</div></li>
+<li><div class="agenda-inactive agenda-pre-active">
+<p>El método multiplicativo y aditivo de Holt-Winters</p>
+</div></li>
+<li><div class="agenda-active">
+<p>Taxonomía de los métodos de SE</p>
+</div></li>
+<li><div class="agenda-inactive agenda-post-active">
+<p>Representación como modelos de Espacio de Estados</p>
+</div></li>
+</ol>
+</div>
+</section>
+<section id="taxonomía-de-los-métodos-de-se-1" class="slide level2">
+<h2>Taxonomía de los métodos de SE</h2>
+<table class="caption-top" style="width:100%;">
+<colgroup>
+<col style="width: 37%">
+<col style="width: 11%">
+<col style="width: 28%">
+<col style="width: 22%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Tendencia</th>
+<th style="text-align: center;"></th>
+<th style="text-align: center;">Componente estacional</th>
+<th style="text-align: center;"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: center;"><span class="math inline">\(N\)</span> (No)</td>
+<td style="text-align: center;"><span class="math inline">\(A\)</span> (Aditivo)</td>
+<td style="text-align: center;"><span class="math inline">\(M\)</span> (Multiplicativo)</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(N (\text{No)}\)</span></td>
+<td style="text-align: center;"><span class="math inline">\((N,N)\)</span></td>
+<td style="text-align: center;"><span class="math inline">\((N,A)\)</span></td>
+<td style="text-align: center;"><span class="math inline">\((N,M)\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(A (\text{Aditivo})\)</span></td>
+<td style="text-align: center;"><span class="math inline">\((A,N)\)</span></td>
+<td style="text-align: center;"><span class="math inline">\((A,A)\)</span></td>
+<td style="text-align: center;"><span class="math inline">\((A,M)\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(A_d\)</span> <span class="math inline">\((\text{Aditivo}_{damped})\)</span></td>
+<td style="text-align: center;"><span class="math inline">\((A_d,N)\)</span></td>
+<td style="text-align: center;"><span class="math inline">\((A_d,A)\)</span></td>
+<td style="text-align: center;"><span class="math inline">\((A_d,M)\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>Note que algunos de estos ya lo acabamos de ver:</p>
+<ul>
+<li><span class="math inline">\((N,N)\)</span>: SES</li>
+<li><span class="math inline">\((A,N)\)</span>: Método lineal de Holt</li>
+<li><span class="math inline">\((A_d,N)\)</span>: Holt amortiguado</li>
+<li><span class="math inline">\((A,A)\)</span>: HW aditivo</li>
+<li><span class="math inline">\((A,M)\)</span>: H-W Multiplicativo</li>
+<li><span class="math inline">\((A_d,M)\)</span>: H-W multiplicativo amortiguado</li>
+<li><span class="math inline">\((A_d,A)\)</span>: H-W aditivo amortiguado</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>En <code>R</code>, especifica el tipo de error como “aditivo” o “multiplicativo”, y se usa la notación del modelo ETS como <code>(ZZZ)</code>, donde las 3 <code>Z</code>’s representan:</p>
+<ul>
+<li>El error (“A”, “M”, “Z”),</li>
+<li>La tendencia (“N”,“A”,“M” or “Z”), y</li>
+<li>El componente estacional (“N”,“A”,“M” or “Z”).</li>
+<li><span class="math inline">\(N:\)</span> no, <span class="math inline">\(A:\)</span> aditivo, <span class="math inline">\(M:\)</span> multiplicativo y <span class="math inline">\(Z:\)</span> automático.</li>
+</ul></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li>Por ejemplo, si necesito estimar</li>
+</ul>
+<div class="cell columns column-output-location">
+<div class="column">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href=""></a>turistas<span class="ot">&lt;-</span><span class="fu">read.csv</span>(<span class="st">"turistas.csv"</span>,<span class="at">sep=</span><span class="st">";"</span>)</span>
+<span id="cb22-2"><a href=""></a>y<span class="ot">&lt;-</span><span class="fu">ts</span>(turistas<span class="sc">$</span>turistas,<span class="at">start=</span><span class="fu">c</span>(<span class="dv">1991</span>,<span class="dv">1</span>),<span class="at">frequency=</span><span class="dv">12</span>)</span>
+<span id="cb22-3"><a href=""></a>hw_ad<span class="ot">&lt;-</span><span class="fu">ets</span>(y,<span class="at">model=</span><span class="st">"AAA"</span>,<span class="at">damped =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb22-4"><a href=""></a>hw_ad_a<span class="ot">&lt;-</span><span class="fu">ets</span>(y,<span class="at">model=</span><span class="st">"AAA"</span>,<span class="at">damped =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb22-5"><a href=""></a>hw_mul<span class="ot">&lt;-</span><span class="fu">ets</span>(y,<span class="at">model=</span><span class="st">"MAM"</span>,<span class="at">damped =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb22-6"><a href=""></a>hw_mul_a<span class="ot">&lt;-</span><span class="fu">ets</span>(y,<span class="at">model=</span><span class="st">"MAM"</span>,<span class="at">damped =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb22-7"><a href=""></a>hw_auto<span class="ot">&lt;-</span><span class="fu">ets</span>(y,<span class="at">model=</span><span class="st">"ZZZ"</span>) <span class="co">#selecciona el mejor modelo usando AIC.</span></span>
+<span id="cb22-8"><a href=""></a><span class="fu">plot</span>(hw_auto)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column">
 <div class="cell-output-display">
 <div>
 <figure>
@@ -629,19 +867,12 @@ F-statistic: 908.1 on 1 and 40 DF,  p-value: &lt; 2.2e-16</code></pre>
 </figure>
 </div>
 </div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-    Breusch-Godfrey test for serial correlation of order up to 8
-
-data:  Residuals from Linear regression model
-LM test = 28.813, df = 8, p-value = 0.000342</code></pre>
-</div>
-</div>
 </div></div>
+<p>¿Qué es el término del error y cómo se define los criterios de información como el AIC?</p>
 </section></section>
 <section>
-<section id="el-tiempo-como-covariables" class="title-slide slide level1 agenda-slide center">
-<h1>El tiempo como covariables</h1>
+<section id="representación-como-modelos-de-espacio-de-estados" class="title-slide slide level1 agenda-slide center">
+<h1>Representación como modelos de Espacio de Estados</h1>
 <div class="agenda-heading">
 <p>Contenido</p>
 </div>
@@ -651,127 +882,148 @@ LM test = 28.813, df = 8, p-value = 0.000342</code></pre>
 <p>Introducción</p>
 </div></li>
 <li><div class="agenda-inactive agenda-pre-active">
-<p>Modelos de regresión</p>
+<p>Suavizamiento exponencial simple (SES)</p>
 </div></li>
 <li><div class="agenda-inactive agenda-pre-active">
-<p>Regresión espuria</p>
+<p>El método lineal de Holt</p>
+</div></li>
+<li><div class="agenda-inactive agenda-pre-active">
+<p>El método lineal de Holt amortiguado</p>
+</div></li>
+<li><div class="agenda-inactive agenda-pre-active">
+<p>El método multiplicativo y aditivo de Holt-Winters</p>
+</div></li>
+<li><div class="agenda-inactive agenda-pre-active">
+<p>Taxonomía de los métodos de SE</p>
 </div></li>
 <li><div class="agenda-active">
-<p>El tiempo como covariables</p>
-</div></li>
-<li><div class="agenda-inactive agenda-post-active">
-<p>Pronósticos usando regresión</p>
-</div></li>
-<li><div class="agenda-inactive agenda-post-active">
-<p>Extensiones de modelos de regresión</p>
+<p>Representación como modelos de Espacio de Estados</p>
 </div></li>
 </ol>
 </div>
 </section>
-<section id="el-tiempo-como-covariables-1" class="slide level2">
-<h2>El tiempo como covariables</h2>
-<p>El tiempo también sirve como variable predictora:</p>
+<section id="representación-como-modelos-de-espacio-de-estados-1" class="slide level2">
+<h2>Representación como modelos de Espacio de Estados</h2>
 <ul>
-<li>Modelos de tendencia (lineales o no lineales)</li>
-<li>Modelos estacionalidad (variables indicadoras)</li>
+<li>El modelo de Espacio de Estados en general está caracterizado por dos procesos en el tiempo:</li>
 </ul>
-<p>Veremos más adelante en regresión dinámica:</p>
+<ol type="1">
+<li><p><span class="alert">Un proceso latente (o oculto) <span class="math inline">\(x_t\)</span>:</span> Se supone que es un proceso de Markov, i.e.&nbsp;<span class="math display">\[P(x_t|x_{t-1},x_{t-2},...)=P(x_t|x_{t-1})\]</span></p></li>
+<li><p><span class="alert">Un proceso de observaciones <span class="math inline">\(y_t\)</span>:</span> Se supone que son independientes dado los estados <span class="math inline">\(x_t\)</span>.</p></li>
+</ol>
+
+<img data-src="figura1.png" width="323" class="r-stretch quarto-figure-center"><p class="caption">Fuente: Shumway &amp; Stoffer (2017)</p></section>
+<section id="representación-del-ses" class="slide level2 smaller">
+<h2>Representación del SES</h2>
+<p>Como ilustración, note que la ecuación del SES: <span class="math inline">\(P_{t+1}=\alpha Z_t + (1-\alpha)~ P_t\)</span>, se puede reescribir como:</p>
 <ul>
-<li>Análisis de intervención.</li>
-<li>Estrategias para valores extremos.</li>
+<li><span class="alert">La ecuación del pronóstico:</span></li>
 </ul>
-</section>
-<section id="modelos-de-tendencia" class="slide level2">
-<h2>Modelos de tendencia</h2>
+<p><span class="math display">\[\begin{align*}P_{t+1}=l_t
+\end{align*}\]</span></p>
 <ul>
-<li><p>Como las variables independiente son asumidas como fijas, se puede utilizar el tiempo como una variable independiente.</p></li>
-<li><p>Los modelos más frecuentes:</p>
-<ul>
-<li><span class="alert">Tendencia lineal</span>: <span class="math display">\[Y_t=\beta_0+\beta_1 t + \epsilon_t\]</span></li>
-<li><span class="alert">Tendencia cuadrática</span>: <span class="math display">\[Y_t=\beta_0+\beta_1 t +\beta_2 t^2 + \epsilon_t\]</span></li>
-</ul></li>
-<li><p>Regresión no lineal.</p>
-<ul>
-<li>Por ejemplo: LOESS.</li>
-</ul></li>
+<li><span class="alert">La ecuación del suavizamiento:</span></li>
 </ul>
+<p><span class="math display">\[\begin{align*}
+\ell_t &amp;= \alpha Z_t + (1 - \alpha) P_t \\
+       &amp;= \alpha Z_t + (1 - \alpha) \ell_{t-1}
+\end{align*}\]</span></p>
+<p>Arreglando la ecuación del suavizamiento:</p>
+<p><span class="math display">\[\begin{align*}
+\ell_t &amp;= \ell_{t-1} + \alpha (Z_t - \ell_{t-1}) \\
+       &amp;= \ell_{t-1} + \alpha e_t
+\end{align*}\]</span></p>
+<p>donde <span class="math inline">\(e_t = Z_t - l_{t-1} = Z_t - P_{t}\)</span> es el error.</p>
 </section>
 <section class="slide level2">
 
-<p>Vamos a ajustar un modelo de tendencia cuadrática a la serie de graduados de ITCR de 1975 a 2002: <span class="math display">\[Y_t=\beta_0+\beta_1 t +\beta_2 t^2 + \epsilon_t, t=1,...,T\]</span></p>
-<div class="cell columns column-output-location">
-<div class="column">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href=""></a>itcrgrad<span class="ot">&lt;-</span><span class="fu">read.csv</span>(<span class="st">"ITCR.csv"</span>,<span class="at">sep=</span><span class="st">","</span>)</span>
-<span id="cb21-2"><a href=""></a>y<span class="ot">&lt;-</span><span class="fu">ts</span>(itcrgrad<span class="sc">$</span>graduados,<span class="at">start=</span><span class="dv">1975</span>)</span>
-<span id="cb21-3"><a href=""></a>tiempo<span class="ot">&lt;-</span><span class="fu">seq</span>(<span class="dv">1</span>,<span class="fu">length</span>(y))</span>
-<span id="cb21-4"><a href=""></a>tiempo2<span class="ot">&lt;-</span>tiempo<span class="sc">^</span><span class="dv">2</span></span>
-<span id="cb21-5"><a href=""></a>mod<span class="ot">&lt;-</span><span class="fu">lm</span>(y<span class="sc">~</span>tiempo<span class="sc">+</span>tiempo2)</span>
-<span id="cb21-6"><a href=""></a></span>
-<span id="cb21-7"><a href=""></a><span class="fu">autoplot</span>(y) <span class="sc">+</span></span>
-<span id="cb21-8"><a href=""></a>  <span class="fu">ylab</span>(<span class="st">"ITCR"</span>) <span class="sc">+</span></span>
-<span id="cb21-9"><a href=""></a>  <span class="fu">autolayer</span>(<span class="fu">ts</span>(mod<span class="sc">$</span>fitted.values,<span class="at">start=</span><span class="dv">1975</span>), <span class="at">series =</span> <span class="st">"ajustado"</span>) </span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
-</div><div class="column">
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-15-1.png" width="576"></p>
-</figure>
+<ul>
+<li><p>Podríamos definir la ecuación del pronóstico como <span class="math inline">\(Z_t = l_{t-1}+e_t\)</span>, introduciendo un error aleatorio. Finalmente, la representación del modelo Espacio de Estados se escribe de la siguiente forma: <span class="math display">\[\begin{align*}
+Z_t &amp;= \ell_{t-1} + e_t \\
+\ell_t &amp;= \ell_{t-1} + \alpha e_t
+\end{align*}\]</span></p></li>
+<li><p>Asumiendo alguna distribución de <span class="math inline">\(e_t\)</span>, se puede especificar el modelo estadístico. Por lo que se puede realizar inferencias a los parámetros y los pronósticos con intervalo de confianza.</p></li>
+<li><p>De forma similar, el SES con el error multiplicativo es</p></li>
+</ul>
+<p><span class="math display">\[\begin{align*}
+Z_t &amp;= \ell_{t-1} ( 1+ e_t) \\
+\ell_t &amp;= \ell_{t-1} (1 + \alpha e_t)
+\end{align*}\]</span></p>
+</section>
+<section id="comparación-de-varios-modelos" class="slide level2 smaller">
+<h2>Comparación de varios modelos</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href=""></a><span class="fu">accuracy</span>(hw_ad)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                    ME     RMSE      MAE        MPE     MAPE      MASE
+Training set -394.6563 4297.824 3312.536 -0.7004108 5.216048 0.5450541
+                     ACF1
+Training set -0.003568228</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href=""></a><span class="fu">accuracy</span>(hw_ad_a)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                   ME    RMSE      MAE       MPE    MAPE     MASE       ACF1
+Training set 260.7423 4254.83 3302.818 0.2544367 5.10127 0.543455 0.00139745</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href=""></a><span class="fu">accuracy</span>(hw_mul)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                   ME     RMSE      MAE        MPE     MAPE      MASE
+Training set -296.167 3301.525 2602.353 -0.7057268 3.976193 0.4281986
+                   ACF1
+Training set 0.07227753</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href=""></a><span class="fu">accuracy</span>(hw_mul_a)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                   ME     RMSE      MAE       MPE     MAPE      MASE       ACF1
+Training set 372.8259 3283.797 2633.531 0.3366449 3.939674 0.4333287 0.07885943</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href=""></a><span class="fu">accuracy</span>(hw_auto)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                   ME     RMSE      MAE       MPE     MAPE      MASE       ACF1
+Training set 372.8259 3283.797 2633.531 0.3366449 3.939674 0.4333287 0.07885943</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href=""></a><span class="fu">summary</span>(hw_auto)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>ETS(M,Ad,M) 
+
+Call:
+ets(y = y, model = "ZZZ")
+
+  Smoothing parameters:
+    alpha = 0.5798 
+    beta  = 1e-04 
+    gamma = 1e-04 
+    phi   = 0.9774 
+
+  Initial states:
+    l = 37996.857 
+    b = 809.5089 
+    s = 1.1769 0.9461 0.7722 0.7183 0.955 1.0858
+           0.8657 0.8016 0.9472 1.1851 1.2074 1.3387
+
+  sigma:  0.0516
+
+     AIC     AICc      BIC 
+2535.688 2542.460 2585.863 
+
+Training set error measures:
+                   ME     RMSE      MAE       MPE     MAPE      MASE       ACF1
+Training set 372.8259 3283.797 2633.531 0.3366449 3.939674 0.4333287 0.07885943</code></pre>
 </div>
 </div>
 </div></div>
 </section>
 <section class="slide level2">
 
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href=""></a><span class="fu">summary</span>(mod)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-Call:
-lm(formula = y ~ tiempo + tiempo2)
-
-Residuals:
-     Min       1Q   Median       3Q      Max 
--117.932  -49.683    4.506   43.234  155.390 
-
-Coefficients:
-            Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept) 127.0021    43.6818   2.907  0.00753 ** 
-tiempo      -12.7887     6.9427  -1.842  0.07736 .  
-tiempo2       1.5612     0.2323   6.720 4.83e-07 ***
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-Residual standard error: 71.61 on 25 degrees of freedom
-Multiple R-squared:  0.944, Adjusted R-squared:  0.9395 
-F-statistic: 210.6 on 2 and 25 DF,  p-value: 2.268e-16</code></pre>
-</div>
-</div>
-</section>
-<section class="slide level2">
-
 <div class="columns">
 <div class="column" style="width:50%;">
-<ul>
-<li>Supuestos:
-<ul>
-<li>Normalidad</li>
-<li>Homoscedasticidad</li>
-<li>Autocorrelación en el tiempo</li>
-</ul></li>
-</ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href=""></a><span class="fu">hist</span>(mod<span class="sc">$</span>residuals,<span class="at">main=</span><span class="st">""</span>,<span class="at">xlab=</span><span class="st">"residuales"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-17-1.png" width="384"></p>
-</figure>
-</div>
-</div>
-</div>
-</div><div class="column" style="width:50%;">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href=""></a>car<span class="sc">::</span><span class="fu">qqPlot</span>(mod<span class="sc">$</span>residuals,<span class="at">ylab=</span><span class="st">"residuales"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href=""></a><span class="fu">autoplot</span>(hw_auto)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure>
@@ -779,567 +1031,23 @@ F-statistic: 210.6 on 2 and 25 DF,  p-value: 2.268e-16</code></pre>
 </figure>
 </div>
 </div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1]  8 21</code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href=""></a><span class="fu">shapiro.test</span>(mod<span class="sc">$</span>residuals)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-    Shapiro-Wilk normality test
-
-data:  mod$residuals
-W = 0.97509, p-value = 0.7211</code></pre>
-</div>
-</div>
-</div></div>
-</section>
-<section class="slide level2">
-
-<ul>
-<li>Los residuales en el tiempo:</li>
-</ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href=""></a><span class="fu">ts.plot</span>(mod<span class="sc">$</span>residuals,<span class="at">ylab=</span><span class="st">"residuales"</span>) </span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
-
-</div>
-<img data-src="presentacion_files/figure-revealjs/unnamed-chunk-20-1.png" width="384" class="r-stretch"></section>
-<section class="slide level2">
-
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href=""></a><span class="fu">checkresiduals</span>(mod)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
-
-<div class="cell-output cell-output-stdout">
-<pre><code>
-    Breusch-Godfrey test for serial correlation of order up to 6
-
-data:  Residuals
-LM test = 3.9215, df = 6, p-value = 0.6873</code></pre>
-</div>
-</div>
-<img data-src="presentacion_files/figure-revealjs/unnamed-chunk-21-1.png" width="384" class="r-stretch"></section>
-<section id="transformación-en-modelos-estacionales" class="slide level2">
-<h2>Transformación en modelos estacionales</h2>
-<ul>
-<li>Si la magnitud del cambio estacional se mantiene aproximadamente constante con el cambio del nivel de la serie, se dice que la variación estacional es constante (aditiva).</li>
-<li>Si la variación estacional aumenta proporcionalmente con el nivel de la serie, se dice que la variación estacional es multiplicativa.</li>
-</ul>
-<p>Transformaciones usadas en la práctica:</p>
-<ul>
-<li><p><span class="math inline">\(W_t=Y_t^\alpha,~~\text{con} -1&lt;\alpha&lt;1\)</span></p></li>
-<li><p><span class="math inline">\(W_t=\ln Y_t\)</span></p></li>
-</ul>
-</section>
-<section id="ejemplo-de-turistas" class="slide level2">
-<h2>Ejemplo de turistas</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href=""></a>turistas<span class="ot">&lt;-</span><span class="fu">read.csv</span>(<span class="st">"turistas.csv"</span>,<span class="at">sep=</span><span class="st">";"</span>)</span>
-<span id="cb32-2"><a href=""></a>y<span class="ot">&lt;-</span><span class="fu">ts</span>(turistas<span class="sc">$</span>turistas,<span class="at">start=</span><span class="fu">c</span>(<span class="dv">1991</span>,<span class="dv">1</span>),<span class="at">frequency=</span><span class="dv">12</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div class="columns">
-<div class="column" style="width:50%;">
-<p>Sin transformación <span class="math inline">\((Y_t)\)</span></p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href=""></a><span class="fu">autoplot</span>(y) </span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-23-1.png" width="384"></p>
-</figure>
-</div>
-</div>
-</div>
-</div><div class="column" style="width:50%;">
-<p>Con transformación <span class="math inline">\((\ln Y_t)\)</span></p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href=""></a><span class="fu">autoplot</span>(<span class="fu">log</span>(y))  </span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-24-1.png" width="384"></p>
-</figure>
-</div>
-</div>
-</div>
-</div></div>
-</section>
-<section id="modelos-de-series-estacionales-mediante-variables-indicadoras" class="slide level2">
-<h2>Modelos de series estacionales mediante variables indicadoras</h2>
-<ul>
-<li>La idea es utilizar un factor (variables indicadoras) como predictor para indicar el periodo de la estacionalidad.<br>
-</li>
-<li>Ejemplo de turistas (datos mensuales y con tendencia cuadrática)</li>
-</ul>
-<p><span class="math display">\[ln Y_t=\alpha_0+\alpha_1 t + \alpha_2 t^2 +\beta_1 I_{1}+...+\beta_11 I_{11}+\epsilon_t\]</span></p>
-<div class="cell columns column-output-location">
-<div class="column">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href=""></a>w<span class="ot">&lt;-</span><span class="fu">log</span>(y)</span>
-<span id="cb35-2"><a href=""></a>tiempo<span class="ot">&lt;-</span><span class="fu">seq</span>(<span class="dv">1</span>,<span class="fu">length</span>(y))</span>
-<span id="cb35-3"><a href=""></a>tiempo2<span class="ot">&lt;-</span>tiempo<span class="sc">^</span><span class="dv">2</span></span>
-<span id="cb35-4"><a href=""></a>mes<span class="ot">&lt;-</span><span class="fu">rep</span>(<span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">12</span>),<span class="dv">10</span>)</span>
-<span id="cb35-5"><a href=""></a>mes<span class="ot">&lt;-</span><span class="fu">as.factor</span>(mes)</span>
-<span id="cb35-6"><a href=""></a></span>
-<span id="cb35-7"><a href=""></a>datos1<span class="ot">&lt;-</span><span class="fu">data.frame</span>(w,tiempo,tiempo2,mes)</span>
-<span id="cb35-8"><a href=""></a><span class="fu">head</span>(datos1)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
-</div><div class="column">
-<div class="cell-output cell-output-stdout">
-<pre><code>         w tiempo tiempo2 mes
-1 10.76223      1       1   1
-2 10.72731      2       4   2
-3 10.78324      3       9   3
-4 10.50832      4      16   4
-5 10.36113      5      25   5
-6 10.51486      6      36   6</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href=""></a><span class="fu">tail</span>(datos1)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>           w tiempo tiempo2 mes
-115 11.42852    115   13225   7
-116 11.26863    116   13456   8
-117 11.08610    117   13689   9
-118 11.13942    118   13924  10
-119 11.45100    119   14161  11
-120 11.68831    120   14400  12</code></pre>
-</div>
-</div></div>
-</section>
-<section class="slide level2">
-
-<div class="columns">
-<div class="column" style="width:50%;">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href=""></a>mod<span class="ot">&lt;-</span><span class="fu">lm</span>(w<span class="sc">~</span>tiempo<span class="sc">+</span>tiempo2<span class="sc">+</span>mes,datos1)</span>
-<span id="cb39-2"><a href=""></a><span class="fu">round</span>(<span class="fu">summary</span>(mod)<span class="sc">$</span>coefficients,<span class="dv">4</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>            Estimate Std. Error  t value Pr(&gt;|t|)
-(Intercept)  10.9420     0.0294 372.1819   0.0000
-tiempo        0.0086     0.0008  11.1807   0.0000
-tiempo2       0.0000     0.0000  -3.2291   0.0017
-mes2         -0.1013     0.0324  -3.1246   0.0023
-mes3         -0.1181     0.0324  -3.6408   0.0004
-mes4         -0.3467     0.0324 -10.6900   0.0000
-mes5         -0.5050     0.0324 -15.5680   0.0000
-mes6         -0.4243     0.0324 -13.0771   0.0000
-mes7         -0.2037     0.0325  -6.2784   0.0000
-mes8         -0.3326     0.0325 -10.2482   0.0000
-mes9         -0.6091     0.0325 -18.7601   0.0000
-mes10        -0.5293     0.0325 -16.2990   0.0000
-mes11        -0.3263     0.0325 -10.0431   0.0000
-mes12        -0.1042     0.0325  -3.2068   0.0018</code></pre>
-</div>
 </div>
 </div><div class="column" style="width:50%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href=""></a>mod2<span class="ot">&lt;-</span><span class="fu">tslm</span>(w<span class="sc">~</span>trend<span class="sc">+</span><span class="fu">I</span>(trend<span class="sc">^</span><span class="dv">2</span>)<span class="sc">+</span>season,datos1)</span>
-<span id="cb41-2"><a href=""></a><span class="fu">round</span>(<span class="fu">summary</span>(mod2)<span class="sc">$</span>coefficients,<span class="dv">4</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>            Estimate Std. Error  t value Pr(&gt;|t|)
-(Intercept)  10.9420     0.0294 372.1819   0.0000
-trend         0.0086     0.0008  11.1807   0.0000
-I(trend^2)    0.0000     0.0000  -3.2291   0.0017
-season2      -0.1013     0.0324  -3.1246   0.0023
-season3      -0.1181     0.0324  -3.6408   0.0004
-season4      -0.3467     0.0324 -10.6900   0.0000
-season5      -0.5050     0.0324 -15.5680   0.0000
-season6      -0.4243     0.0324 -13.0771   0.0000
-season7      -0.2037     0.0325  -6.2784   0.0000
-season8      -0.3326     0.0325 -10.2482   0.0000
-season9      -0.6091     0.0325 -18.7601   0.0000
-season10     -0.5293     0.0325 -16.2990   0.0000
-season11     -0.3263     0.0325 -10.0431   0.0000
-season12     -0.1042     0.0325  -3.2068   0.0018</code></pre>
-</div>
-</div>
-</div></div>
-</section>
-<section class="slide level2">
-
-<ul>
-<li>Pronóstico de <span class="math inline">\(W_t = log (Y_t)\)</span>.</li>
-</ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href=""></a>pronostico<span class="ot">&lt;-</span><span class="fu">forecast</span>(mod2,<span class="at">h=</span><span class="dv">12</span>)</span>
-<span id="cb43-2"><a href=""></a></span>
-<span id="cb43-3"><a href=""></a><span class="fu">autoplot</span>(w) <span class="sc">+</span></span>
-<span id="cb43-4"><a href=""></a>  <span class="fu">ylab</span>(<span class="st">"log(turistas)"</span>) <span class="sc">+</span></span>
-<span id="cb43-5"><a href=""></a>  <span class="fu">autolayer</span>(mod2<span class="sc">$</span>fitted.values, <span class="at">series =</span> <span class="st">"ajustado"</span>) <span class="sc">+</span></span>
-<span id="cb43-6"><a href=""></a>  <span class="fu">autolayer</span>(pronostico, <span class="at">series =</span> <span class="st">"pronostico"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
-
-</div>
-<img data-src="presentacion_files/figure-revealjs/unnamed-chunk-28-1.png" width="480" class="r-stretch"></section>
-<section class="slide level2">
-
-<ul>
-<li>La ventaja de <code>tslm</code> es que se puede especificar la transformación con el argumen <code>lambda</code>.</li>
-</ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href=""></a>mod3<span class="ot">&lt;-</span><span class="fu">tslm</span>(y<span class="sc">~</span>trend<span class="sc">+</span><span class="fu">I</span>(trend<span class="sc">^</span><span class="dv">2</span>)<span class="sc">+</span>season, <span class="at">lambda =</span> <span class="dv">0</span>)</span>
-<span id="cb44-2"><a href=""></a><span class="fu">summary</span>(mod3)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-Call:
-tslm(formula = y ~ trend + I(trend^2) + season, lambda = 0)
-
-Residuals:
-      Min        1Q    Median        3Q       Max 
--0.188378 -0.048245  0.007514  0.052592  0.135323 
-
-Coefficients:
-              Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)  1.094e+01  2.940e-02 372.182  &lt; 2e-16 ***
-trend        8.617e-03  7.707e-04  11.181  &lt; 2e-16 ***
-I(trend^2)  -1.992e-05  6.169e-06  -3.229 0.001654 ** 
-season2     -1.013e-01  3.243e-02  -3.125 0.002297 ** 
-season3     -1.181e-01  3.243e-02  -3.641 0.000422 ***
-season4     -3.467e-01  3.243e-02 -10.690  &lt; 2e-16 ***
-season5     -5.050e-01  3.244e-02 -15.568  &lt; 2e-16 ***
-season6     -4.243e-01  3.244e-02 -13.077  &lt; 2e-16 ***
-season7     -2.037e-01  3.245e-02  -6.278 7.65e-09 ***
-season8     -3.326e-01  3.246e-02 -10.248  &lt; 2e-16 ***
-season9     -6.091e-01  3.247e-02 -18.760  &lt; 2e-16 ***
-season10    -5.293e-01  3.248e-02 -16.299  &lt; 2e-16 ***
-season11    -3.263e-01  3.249e-02 -10.043  &lt; 2e-16 ***
-season12    -1.042e-01  3.250e-02  -3.207 0.001775 ** 
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-Residual standard error: 0.07251 on 106 degrees of freedom
-Multiple R-squared:  0.9439,    Adjusted R-squared:  0.937 
-F-statistic: 137.3 on 13 and 106 DF,  p-value: &lt; 2.2e-16</code></pre>
-</div>
-</div>
-</section></section>
-<section>
-<section id="pronósticos-usando-regresión" class="title-slide slide level1 agenda-slide center">
-<h1>Pronósticos usando regresión</h1>
-<div class="agenda-heading">
-<p>Contenido</p>
-</div>
-<div class="agenda">
-<ol>
-<li><div class="agenda-inactive agenda-pre-active">
-<p>Introducción</p>
-</div></li>
-<li><div class="agenda-inactive agenda-pre-active">
-<p>Modelos de regresión</p>
-</div></li>
-<li><div class="agenda-inactive agenda-pre-active">
-<p>Regresión espuria</p>
-</div></li>
-<li><div class="agenda-inactive agenda-pre-active">
-<p>El tiempo como covariables</p>
-</div></li>
-<li><div class="agenda-active">
-<p>Pronósticos usando regresión</p>
-</div></li>
-<li><div class="agenda-inactive agenda-post-active">
-<p>Extensiones de modelos de regresión</p>
-</div></li>
-</ol>
-</div>
-</section>
-<section id="pronósticos-usando-regresión-1" class="slide level2">
-<h2>Pronósticos usando regresión</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href=""></a>y<span class="ot">&lt;-</span><span class="fu">ts</span>(turistas<span class="sc">$</span>turistas,<span class="at">start=</span><span class="fu">c</span>(<span class="dv">1991</span>,<span class="dv">1</span>),<span class="at">frequency=</span><span class="dv">12</span>)</span>
-<span id="cb46-2"><a href=""></a>y.train<span class="ot">&lt;-</span><span class="fu">window</span>(y,<span class="at">start=</span><span class="fu">c</span>(<span class="dv">1991</span>,<span class="dv">1</span>),<span class="at">end=</span><span class="fu">c</span>(<span class="dv">1999</span>,<span class="dv">12</span>))</span>
-<span id="cb46-3"><a href=""></a>y.test<span class="ot">&lt;-</span><span class="fu">window</span>(y,<span class="at">start=</span><span class="fu">c</span>(<span class="dv">2000</span>,<span class="dv">1</span>),<span class="at">end=</span><span class="fu">c</span>(<span class="dv">2000</span>,<span class="dv">12</span>))</span>
-<span id="cb46-4"><a href=""></a></span>
-<span id="cb46-5"><a href=""></a>mod4<span class="ot">&lt;-</span><span class="fu">tslm</span>(y.train<span class="sc">~</span>trend<span class="sc">+</span><span class="fu">I</span>(trend<span class="sc">^</span><span class="dv">2</span>)<span class="sc">+</span>season, <span class="at">lambda =</span> <span class="dv">0</span>)</span>
-<span id="cb46-6"><a href=""></a><span class="fu">summary</span>(mod4)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-Call:
-tslm(formula = y.train ~ trend + I(trend^2) + season, lambda = 0)
-
-Residuals:
-     Min       1Q   Median       3Q      Max 
--0.17475 -0.04751  0.00836  0.04812  0.13057 
-
-Coefficients:
-              Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)  1.093e+01  3.104e-02 352.036  &lt; 2e-16 ***
-trend        9.663e-03  9.059e-04  10.667  &lt; 2e-16 ***
-I(trend^2)  -3.135e-05  8.048e-06  -3.895 0.000184 ***
-season2     -1.023e-01  3.427e-02  -2.986 0.003605 ** 
-season3     -1.221e-01  3.427e-02  -3.561 0.000581 ***
-season4     -3.528e-01  3.428e-02 -10.291  &lt; 2e-16 ***
-season5     -5.110e-01  3.428e-02 -14.905  &lt; 2e-16 ***
-season6     -4.229e-01  3.429e-02 -12.335  &lt; 2e-16 ***
-season7     -1.969e-01  3.430e-02  -5.741 1.15e-07 ***
-season8     -3.217e-01  3.431e-02  -9.376 3.89e-15 ***
-season9     -6.078e-01  3.432e-02 -17.713  &lt; 2e-16 ***
-season10    -5.245e-01  3.433e-02 -15.277  &lt; 2e-16 ***
-season11    -3.327e-01  3.434e-02  -9.688 8.44e-16 ***
-season12    -1.116e-01  3.436e-02  -3.249 0.001606 ** 
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-Residual standard error: 0.0727 on 94 degrees of freedom
-Multiple R-squared:  0.9382,    Adjusted R-squared:  0.9296 
-F-statistic: 109.7 on 13 and 94 DF,  p-value: &lt; 2.2e-16</code></pre>
-</div>
-</div>
-</div><div class="column" style="width:50%;">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href=""></a>pronostico<span class="ot">&lt;-</span><span class="fu">forecast</span>(mod4,<span class="at">h=</span><span class="dv">12</span>)</span>
-<span id="cb48-2"><a href=""></a>pronostico</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>         Point Forecast    Lo 80     Hi 80    Lo 95     Hi 95
-Jan 2000      109989.74 99272.84 121863.56 93941.82 128779.09
-Feb 2000       99569.71 89844.97 110347.04 85008.45 116625.19
-Mar 2000       97891.63 88306.78 108516.81 83540.84 114707.61
-Apr 2000       77932.30 70281.62  86415.81 66478.26  91359.84
-May 2000       66701.49 60135.29  73984.66 56871.81  78230.13
-Jun 2000       73026.02 65816.53  81025.24 62234.20  85689.22
-Jul 2000       91775.62 82687.92 101862.10 78173.48 107744.53
-Aug 2000       81205.70 73139.61  90161.35 69133.73  95385.65
-Sep 2000       61139.77 55047.22  67906.64 52022.30  71855.18
-Oct 2000       66609.59 59949.83  74009.18 56644.23  78328.14
-Nov 2000       80866.86 72753.77  89884.68 68728.01  95149.70
-Dec 2000      101095.83 90917.22 112413.98 85868.09 119024.03</code></pre>
-</div>
-</div>
-</div></div>
-</section>
-<section class="slide level2">
-
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href=""></a><span class="fu">autoplot</span>(y) <span class="sc">+</span></span>
-<span id="cb50-2"><a href=""></a>  <span class="fu">ylab</span>(<span class="st">"turistas"</span>) <span class="sc">+</span></span>
-<span id="cb50-3"><a href=""></a>  <span class="fu">autolayer</span>(mod4<span class="sc">$</span>fitted.values, <span class="at">series =</span> <span class="st">"ajustado"</span>) <span class="sc">+</span></span>
-<span id="cb50-4"><a href=""></a>  <span class="fu">autolayer</span>(pronostico, <span class="at">series =</span> <span class="st">"pronostico"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
-
-</div>
-<img data-src="presentacion_files/figure-revealjs/unnamed-chunk-32-1.png" width="672" class="r-stretch"><div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href=""></a><span class="fu">accuracy</span>(pronostico,y.test)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>                    ME     RMSE      MAE        MPE     MAPE      MASE
-Training set  158.0941 4400.077 3520.199 -0.2325897 5.582558 0.5706985
-Test set     6689.2284 8676.254 7169.179  7.0049171 7.617677 1.1622750
-                  ACF1 Theil's U
-Training set 0.6648405        NA
-Test set     0.4736527 0.5590507</code></pre>
-</div>
-</div>
-</section></section>
-<section>
-<section id="extensiones-de-modelos-de-regresión" class="title-slide slide level1 agenda-slide center">
-<h1>Extensiones de modelos de regresión</h1>
-<div class="agenda-heading">
-<p>Contenido</p>
-</div>
-<div class="agenda">
-<ol>
-<li><div class="agenda-inactive agenda-pre-active">
-<p>Introducción</p>
-</div></li>
-<li><div class="agenda-inactive agenda-pre-active">
-<p>Modelos de regresión</p>
-</div></li>
-<li><div class="agenda-inactive agenda-pre-active">
-<p>Regresión espuria</p>
-</div></li>
-<li><div class="agenda-inactive agenda-pre-active">
-<p>El tiempo como covariables</p>
-</div></li>
-<li><div class="agenda-inactive agenda-pre-active">
-<p>Pronósticos usando regresión</p>
-</div></li>
-<li><div class="agenda-active">
-<p>Extensiones de modelos de regresión</p>
-</div></li>
-</ol>
-</div>
-</section>
-<section id="extensiones-de-modelos-de-regresión-1" class="slide level2">
-<h2>Extensiones de modelos de regresión</h2>
-<ul>
-<li><p>Modelos no lineales.</p></li>
-<li><p>Modelos lineales generalizados (GLM).</p>
-<ul>
-<li>Variables dependientes que pertenecen a una familia exponencial: Poisson, Exponencial, etc.</li>
-</ul></li>
-<li><p>Modelos aditivos generalizados (GAM).</p>
-<ul>
-<li>Efectos fijos y aleatorios.</li>
-</ul></li>
-<li><p>Modelos aditivos generalizados para locación, escala y forma (GAMLSS).</p></li>
-</ul>
-</section>
-<section id="ejemplo-2" class="slide level2">
-<h2>Ejemplo</h2>
-<h3 id="temperatura-diaria-f-en-cairo-de-01-01-1995-hasta-21-05-2005">Temperatura diaria (F) en Cairo de 01-01-1995 hasta 21-05-2005</h3>
-<div class="columns">
-<div class="column" style="width:50%;">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href=""></a><span class="fu">data</span>(cairo)</span>
-<span id="cb53-2"><a href=""></a><span class="fu">plot</span>(cairo<span class="sc">$</span>temp<span class="sc">~</span>cairo<span class="sc">$</span>time,<span class="at">type=</span><span class="st">"l"</span>, <span class="at">ylab=</span><span class="st">"temp"</span>,<span class="at">xlab=</span><span class="st">"time"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href=""></a>hw_auto <span class="sc">%&gt;%</span> <span class="fu">forecast</span>(<span class="at">h=</span><span class="dv">12</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb36-2"><a href=""></a>  <span class="fu">autoplot</span>() <span class="sc">+</span></span>
+<span id="cb36-3"><a href=""></a>  <span class="fu">ylab</span>(<span class="st">"Turistas"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-34-1.png" width="384"></p>
+<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-19-1.png" width="384"></p>
 </figure>
 </div>
 </div>
 </div>
-</div><div class="column" style="width:50%;">
-<ul>
-<li><p>La estacionalidad es de 365 o 366 días.</p></li>
-<li><p>Muy costoso crear tantas variables indicadoras.</p></li>
-</ul>
 </div></div>
-</section>
-<section class="slide level2">
-
-<ul>
-<li>Ajuste de un GAM</li>
-</ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href=""></a>ctamm <span class="ot">&lt;-</span> <span class="fu">gamm</span>(temp<span class="sc">~</span><span class="fu">s</span>(day.of.year,<span class="at">bs=</span><span class="st">"cc"</span>,<span class="at">k=</span><span class="dv">20</span>)<span class="sc">+</span><span class="fu">s</span>(time,<span class="at">bs=</span><span class="st">"cr"</span>),</span>
-<span id="cb54-2"><a href=""></a>              <span class="at">data=</span>cairo,<span class="at">correlation=</span><span class="fu">corAR1</span>(<span class="at">form=</span><span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>year))</span>
-<span id="cb54-3"><a href=""></a>pred<span class="ot">&lt;-</span><span class="fu">fitted</span>(ctamm<span class="sc">$</span>gam)</span>
-<span id="cb54-4"><a href=""></a><span class="fu">plot</span>(cairo<span class="sc">$</span>temp<span class="sc">~</span>cairo<span class="sc">$</span>time,<span class="at">type=</span><span class="st">"l"</span>, <span class="at">ylab=</span><span class="st">"temp"</span>,<span class="at">xlab=</span><span class="st">"time"</span>)</span>
-<span id="cb54-5"><a href=""></a><span class="fu">points</span>(cairo<span class="sc">$</span>time,pred,<span class="at">type=</span><span class="st">"l"</span>,<span class="at">col=</span><span class="dv">2</span>,<span class="at">lwd=</span><span class="dv">2</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
-
-</div>
-<img data-src="presentacion_files/figure-revealjs/unnamed-chunk-35-1.png" width="480" class="r-stretch"></section>
-<section class="slide level2">
-
-<div class="columns">
-<div class="column" style="width:50%;">
-<ul>
-<li>Periodograma (análisis espectral)</li>
-</ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href=""></a><span class="fu">library</span>(astsa)</span>
-<span id="cb55-2"><a href=""></a>x<span class="ot">&lt;-</span>cairo<span class="sc">$</span>temp</span>
-<span id="cb55-3"><a href=""></a>x.spec <span class="ot">&lt;-</span><span class="fu">mvspec</span>(x,<span class="at">log=</span><span class="st">"no"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-36-1.png" width="384"></p>
-</figure>
-</div>
-</div>
-</div>
-</div><div class="column" style="width:50%;">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href=""></a><span class="fu">plot</span>(x.spec)</span>
-<span id="cb56-2"><a href=""></a>frecuencia<span class="ot">&lt;-</span>x.spec<span class="sc">$</span>freq[x.spec<span class="sc">$</span>spec<span class="sc">==</span><span class="fu">max</span>(x.spec<span class="sc">$</span>spec)]</span>
-<span id="cb56-3"><a href=""></a><span class="fu">abline</span>(<span class="at">v=</span>frecuencia,<span class="at">col=</span><span class="dv">2</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-37-1.png" width="384"></p>
-</figure>
-</div>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href=""></a><span class="dv">1</span><span class="sc">/</span>frecuencia</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 349.0909</code></pre>
-</div>
-</div>
-</div></div>
-<p>La frecuencia dominante <span class="math inline">\(\omega\)</span> es 0.002864583, es decir, se completa un ciclo aproximadamente cada 349.09 días.</p>
-</section>
-<section class="slide level2">
-
-<ul>
-<li>Modelo de regresión lineal con covariables senos y cosenos <span class="math display">\[y_t=\alpha+\beta_1 cos(2 \pi \omega t)+\beta_2 sen(2 \pi \omega t)+\varepsilon_t\]</span></li>
-</ul>
-<div class="cell columns column-output-location">
-<div class="column">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href=""></a>cos1<span class="ot">&lt;-</span><span class="fu">cos</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>frecuencia<span class="sc">*</span>cairo<span class="sc">$</span>time)</span>
-<span id="cb59-2"><a href=""></a>sin1<span class="ot">&lt;-</span><span class="fu">sin</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>frecuencia<span class="sc">*</span>cairo<span class="sc">$</span>time)</span>
-<span id="cb59-3"><a href=""></a>data<span class="ot">=</span><span class="fu">data.frame</span>(<span class="at">x=</span>x,<span class="at">time=</span>cairo<span class="sc">$</span>time,<span class="at">cos=</span>cos1,<span class="at">sen=</span>sin1)</span>
-<span id="cb59-4"><a href=""></a>mod<span class="ot">&lt;-</span><span class="fu">lm</span>(x<span class="sc">~</span>cos1<span class="sc">+</span>sin1,<span class="at">data=</span>data)</span>
-<span id="cb59-5"><a href=""></a><span class="fu">plot</span>(cairo<span class="sc">$</span>temp<span class="sc">~</span>cairo<span class="sc">$</span>time,<span class="at">type=</span><span class="st">"l"</span>, <span class="at">ylab=</span><span class="st">"temp"</span>,<span class="at">xlab=</span><span class="st">"time"</span>)</span>
-<span id="cb59-6"><a href=""></a><span class="fu">points</span>(cairo<span class="sc">$</span>time,<span class="fu">fitted</span>(mod),<span class="at">type=</span><span class="st">"l"</span>,<span class="at">col=</span><span class="dv">2</span>,<span class="at">lwd=</span><span class="dv">2</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
-</div><div class="column">
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-38-1.png" width="384"></p>
-</figure>
-</div>
-</div>
-</div></div>
-</section>
-<section class="slide level2">
-
-<ul>
-<li>Modelo de regresión lineal con covariables senos y cosenos con 5 frecuencias más importantes:</li>
-</ul>
-<p><span class="math display">\[y_t=\alpha+ \sum_{k=1}^{5} \left[ \beta_{1k} cos(2 \pi \omega_k t)+\beta_{2k} sen(2 \pi \omega_k t) \right]+\varepsilon_t\]</span></p>
-<ul>
-<li>Las 8 frecuencias más importantes:</li>
-</ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href=""></a>spectro_orden <span class="ot">&lt;-</span> x.spec<span class="sc">$</span>details <span class="sc">%&gt;%</span> <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(spectrum))</span>
-<span id="cb60-2"><a href=""></a>spectro_orden[<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>,]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>  frequency   period  spectrum
-1    0.0029 349.0909 91251.731
-2    0.0026 384.0000 54420.640
-3    0.0023 426.6667  8986.496
-4    0.0031 320.0000  6148.723
-5    0.0034 295.3846  2902.172
-6    0.0021 480.0000  2409.255
-7    0.0018 548.5714  1666.177
-8    0.0039 256.0000  1331.423</code></pre>
-</div>
-</div>
-</section>
-<section class="slide level2">
-
-<div class="cell columns column-output-location">
-<div class="column">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href=""></a>frecuencia1 <span class="ot">&lt;-</span> spectro_orden<span class="sc">$</span>frequency[<span class="dv">1</span>] </span>
-<span id="cb62-2"><a href=""></a>frecuencia2 <span class="ot">&lt;-</span> spectro_orden<span class="sc">$</span>frequency[<span class="dv">2</span>]</span>
-<span id="cb62-3"><a href=""></a>frecuencia3 <span class="ot">&lt;-</span> spectro_orden<span class="sc">$</span>frequency[<span class="dv">3</span>]</span>
-<span id="cb62-4"><a href=""></a>frecuencia4 <span class="ot">&lt;-</span> spectro_orden<span class="sc">$</span>frequency[<span class="dv">4</span>]</span>
-<span id="cb62-5"><a href=""></a>frecuencia5 <span class="ot">&lt;-</span> spectro_orden<span class="sc">$</span>frequency[<span class="dv">5</span>]</span>
-<span id="cb62-6"><a href=""></a>cos1<span class="ot">&lt;-</span><span class="fu">cos</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>frecuencia1<span class="sc">*</span>cairo<span class="sc">$</span>time)</span>
-<span id="cb62-7"><a href=""></a>sin1<span class="ot">&lt;-</span><span class="fu">sin</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>frecuencia1<span class="sc">*</span>cairo<span class="sc">$</span>time)</span>
-<span id="cb62-8"><a href=""></a>cos2<span class="ot">&lt;-</span><span class="fu">cos</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>frecuencia2<span class="sc">*</span>cairo<span class="sc">$</span>time)</span>
-<span id="cb62-9"><a href=""></a>sin2<span class="ot">&lt;-</span><span class="fu">sin</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>frecuencia2<span class="sc">*</span>cairo<span class="sc">$</span>time)</span>
-<span id="cb62-10"><a href=""></a>cos3<span class="ot">&lt;-</span><span class="fu">cos</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>frecuencia3<span class="sc">*</span>cairo<span class="sc">$</span>time)</span>
-<span id="cb62-11"><a href=""></a>sin3<span class="ot">&lt;-</span><span class="fu">sin</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>frecuencia3<span class="sc">*</span>cairo<span class="sc">$</span>time)</span>
-<span id="cb62-12"><a href=""></a>cos4<span class="ot">&lt;-</span><span class="fu">cos</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>frecuencia4<span class="sc">*</span>cairo<span class="sc">$</span>time)</span>
-<span id="cb62-13"><a href=""></a>sin4<span class="ot">&lt;-</span><span class="fu">sin</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>frecuencia4<span class="sc">*</span>cairo<span class="sc">$</span>time)</span>
-<span id="cb62-14"><a href=""></a>cos5<span class="ot">&lt;-</span><span class="fu">cos</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>frecuencia5<span class="sc">*</span>cairo<span class="sc">$</span>time)</span>
-<span id="cb62-15"><a href=""></a>sin5<span class="ot">&lt;-</span><span class="fu">sin</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>frecuencia5<span class="sc">*</span>cairo<span class="sc">$</span>time)</span>
-<span id="cb62-16"><a href=""></a></span>
-<span id="cb62-17"><a href=""></a>data<span class="ot">=</span><span class="fu">data.frame</span>(<span class="at">x=</span>x,</span>
-<span id="cb62-18"><a href=""></a>                <span class="at">cos1=</span>cos1,<span class="at">sen1=</span>sin1,</span>
-<span id="cb62-19"><a href=""></a>                <span class="at">cos2=</span>cos2,<span class="at">sen2=</span>sin2,</span>
-<span id="cb62-20"><a href=""></a>                <span class="at">cos3=</span>cos3,<span class="at">sen3=</span>sin3,</span>
-<span id="cb62-21"><a href=""></a>                <span class="at">cos4=</span>cos4,<span class="at">sen4=</span>sin4,</span>
-<span id="cb62-22"><a href=""></a>                <span class="at">cos5=</span>cos5,<span class="at">sen5=</span>sin5)</span>
-<span id="cb62-23"><a href=""></a></span>
-<span id="cb62-24"><a href=""></a>mod2<span class="ot">&lt;-</span><span class="fu">lm</span>(x<span class="sc">~</span>.,<span class="at">data=</span>data)</span>
-<span id="cb62-25"><a href=""></a><span class="fu">plot</span>(cairo<span class="sc">$</span>temp<span class="sc">~</span>cairo<span class="sc">$</span>time,<span class="at">type=</span><span class="st">"l"</span>, <span class="at">ylab=</span><span class="st">"temp"</span>,<span class="at">xlab=</span><span class="st">"time"</span>)</span>
-<span id="cb62-26"><a href=""></a><span class="fu">points</span>(cairo<span class="sc">$</span>time,<span class="fu">fitted</span>(mod2),<span class="at">type=</span><span class="st">"l"</span>,<span class="at">col=</span><span class="dv">2</span>,<span class="at">lwd=</span><span class="dv">2</span>)  </span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
-</div><div class="column">
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="presentacion_files/figure-revealjs/unnamed-chunk-40-1.png" width="384"></p>
-</figure>
-</div>
-</div>
-</div></div>
-</section>
-<section id="próximo-tema" class="slide level2">
-<h2>Próximo tema</h2>
-<h3 id="tema-5-modelos-de-series-temporales">Tema 5: Modelos de series temporales</h3>
 
 </section></section>
-
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">

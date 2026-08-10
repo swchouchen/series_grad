@@ -250,7 +250,7 @@
 <p>Evaluación de los pronósticos</p>
 </div></li>
 <li><div class="agenda-inactive agenda-post-active">
-<p>Creación de documentos y reportes usando Quarto</p>
+<p>Información adicional</p>
 </div></li>
 </ol>
 </div>
@@ -434,7 +434,7 @@ Figura&nbsp;5: BOLD
 <p>Evaluación de los pronósticos</p>
 </div></li>
 <li><div class="agenda-inactive agenda-post-active">
-<p>Creación de documentos y reportes usando Quarto</p>
+<p>Información adicional</p>
 </div></li>
 </ol>
 </div>
@@ -494,11 +494,11 @@ Figura&nbsp;5: BOLD
 <ul>
 <li>Considere una serie temporal como una secuencia de variables aleatorias</li>
 </ul>
-<p><span class="math display">\[X_1,X_2,..,X_t,...\]</span></p>
+<p><span class="math display">\[..., X_{-1}, X_0,X_1,X_2,..,X_t,...\]</span></p>
 <ul>
 <li><p>Como las observaciones no son independientes, la inferencia estadística tradicional no es aplicable en este contexto y se requieren otros enfoques.</p></li>
 <li><p><span class="alert">Proceso estocástico:</span> una colección de variables aleatorias indexada por un conjunto <span class="math inline">\(\mathcal{T}\)</span>, <span class="math display">\[\left\lbrace X_t, t \in \mathcal{T} \right\rbrace\]</span></p></li>
-<li><p>Vamos a enfocar el caso cuando <span class="math inline">\(\mathcal{T}\)</span> es un conjunto discreto, i.e.&nbsp;<span class="math inline">\(t=0,1,2,...\)</span>.</p></li>
+<li><p>Vamos a enfocar el caso cuando <span class="math inline">\(\mathcal{T}\)</span> es un conjunto discreto, i.e.&nbsp;<span class="math inline">\(t \in \mathbb{Z}\)</span> o <span class="math inline">\(t \in \mathbb{N}\)</span>.</p></li>
 </ul>
 </div>
 </div>
@@ -525,7 +525,7 @@ Figura&nbsp;5: BOLD
 <p>Evaluación de los pronósticos</p>
 </div></li>
 <li><div class="agenda-inactive agenda-post-active">
-<p>Creación de documentos y reportes usando Quarto</p>
+<p>Información adicional</p>
 </div></li>
 </ol>
 </div>
@@ -710,7 +710,7 @@ Figura&nbsp;6: Diferentes medias móviles aplicado a los datos de pasajeros
 <ul>
 <li><span class="alert">Modelo multiplicativo</span></li>
 </ul>
-<p><span class="math display">\[X_{t} = T_{t} \times S_{t} \times I_t,\]</span> donde:<br> <span class="math inline">\(X_t\)</span>: el valor de la serie <span class="math inline">\(Z\)</span> en el tiempo <span class="math inline">\(t\)</span>, <br> <span class="math inline">\(T_t\)</span>: componente tendencia-ciclo en el tiempo <span class="math inline">\(t\)</span>. <br> <span class="math inline">\(S_t\)</span>: componente estacional en el tiempo <span class="math inline">\(t\)</span>. <br> <span class="math inline">\(I_t\)</span>: componente irregular, aleatorio en el tiempo <span class="math inline">\(t\)</span>.</p>
+<p><span class="math display">\[X_{t} = T_{t} \times S_{t} \times I_t,\]</span> donde:<br> <span class="math inline">\(X_t\)</span>: el valor de la serie <span class="math inline">\(X\)</span> en el tiempo <span class="math inline">\(t\)</span>, <br> <span class="math inline">\(T_t\)</span>: componente tendencia-ciclo en el tiempo <span class="math inline">\(t\)</span>. <br> <span class="math inline">\(S_t\)</span>: componente estacional en el tiempo <span class="math inline">\(t\)</span>. <br> <span class="math inline">\(I_t\)</span>: componente irregular, aleatorio en el tiempo <span class="math inline">\(t\)</span>.</p>
 </section>
 <section class="slide level2">
 
@@ -900,7 +900,7 @@ Figura&nbsp;8: Log-pasajeros
 <p>Evaluación de los pronósticos</p>
 </div></li>
 <li><div class="agenda-inactive agenda-post-active">
-<p>Creación de documentos y reportes usando Quarto</p>
+<p>Información adicional</p>
 </div></li>
 </ol>
 </div>
@@ -1028,8 +1028,8 @@ Test set      1.051162</code></pre>
 </div></div>
 </section></section>
 <section>
-<section id="creación-de-documentos-y-reportes-usando-quarto" class="title-slide slide level1 agenda-slide center">
-<h1>Creación de documentos y reportes usando Quarto</h1>
+<section id="información-adicional" class="title-slide slide level1 agenda-slide center">
+<h1>Información adicional</h1>
 <div class="agenda-heading">
 <p>Contenido</p>
 </div>
@@ -1048,12 +1048,19 @@ Test set      1.051162</code></pre>
 <p>Evaluación de los pronósticos</p>
 </div></li>
 <li><div class="agenda-active">
-<p>Creación de documentos y reportes usando Quarto</p>
+<p>Información adicional</p>
 </div></li>
 </ol>
 </div>
 </section>
-<section id="creación-de-documentos-y-reportes-usando-quarto-1" class="slide level2">
+<section id="paquetes-en-r-y-extensiones" class="slide level2">
+<h2>Paquetes en R y extensiones</h2>
+<p>Existen una variedad de formas de definir objetos de series temporales en R y distintos paquetes para graficar.</p>
+<p><a href="https://cran.r-project.org/web/views/TimeSeries.html" class="uri">https://cran.r-project.org/web/views/TimeSeries.html</a></p>
+<p>Les puede servir:</p>
+<p><a href="https://www.data-to-viz.com/" class="uri">https://www.data-to-viz.com/</a></p>
+</section>
+<section id="creación-de-documentos-y-reportes-usando-quarto" class="slide level2">
 <h2>Creación de documentos y reportes usando Quarto</h2>
 <ul>
 <li>Es un sistema que unifica los códigos, resultados y la redacción del autor, para producir presentaciones, informes, reportes, libros (y otros) con diversos formatos como html, PDF, Word, etc.</li>

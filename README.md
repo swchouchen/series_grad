@@ -16,7 +16,7 @@ aplicación, tanto en la investigación como aplicación.
 | Tema | Clase | Laboratorio y materiales extras |
 |-------------------|----------------------------|--------------------------|
 | 1\. Introducción | [Tema 1](./Tema_1/presentacion.html) |  |
-| 2\. Suavizamiento | [Tema 2](./Tema_2/presentacion.html) | [Lab](./Tema_2/lab.html) |
+| 2\. Suavizamiento | [Tema 2](./Tema_2/presentacion.html) | [Lab](./Tema_2/lab.html) / [archivos](./Tema_2/Tema_2.zip) |
 | 3\. Regresión | [Tema 3](./Tema_3/presentacion.html) |  |
 | 4\. Modelos | [Tema 4](./Tema_4/presentacion.html) | [archivos](./Tema_4/Tema_4.zip) |
 

@@ -6,7 +6,7 @@ contributes:
   formats:
     revealjs:
       theme: [default, clean.scss]
-      include-in-header: chalkboard-setup.html
+      chalkboard: true
       menu:
         side: right
         width: wide
@@ -15,7 +15,6 @@ contributes:
       date-format: long
       fig-width: 4
       fig-height: 4
-      
 
     
 

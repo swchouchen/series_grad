@@ -19,6 +19,10 @@ aplicación, tanto en la investigación como aplicación.
 | 2\. Suavizamiento | [Tema 2](./Tema_2/presentacion.html) | [Lab](./Tema_2/lab.html) / [archivos](./Tema_2/Tema_2.zip) |
 | 3\. Regresión | [Tema 3](./Tema_3/presentacion.html) |  |
 | 4\. Modelos | [Tema 4](./Tema_4/presentacion.html) | [archivos](./Tema_4/Tema_4.zip) |
+| 5\. ARIMA | [Tema 5_1](./Tema_5/presentacion1.html) |  |
+|  | [Tema 5_2](./Tema_5/presentacion2.html) |  |
+|  | [Tema 5_3](./Tema_5/presentacion3.html) | [Lab5_1](./Tema_5/lab1.html) |
+|  | [Tema 5_4](./Tema_5/presentacion4.html) | [Lab5_2](./Tema_5/lab2.html) |
 
 <!-- Tema                      | Clase                        | Laboratorio y materiales extras -->
 <!-- ------------------------- | -----------------------------|------------------------------- -->

@@ -23,6 +23,7 @@ aplicación, tanto en la investigación como aplicación.
 |  | [Tema 5_2](./Tema_5/presentacion2.html) |  |
 |  | [Tema 5_3](./Tema_5/presentacion3.html) | [Lab5_1](./Tema_5/lab1.html) |
 |  | [Tema 5_4](./Tema_5/presentacion4.html) | [Lab5_2](./Tema_5/lab2.html) |
+| 6\. Regresión dinámica | [Tema 6](./Tema_6/presentacion.html) | [archivos](./Tema_6/Tema_6.zip) |
 
 <!-- Tema                      | Clase                        | Laboratorio y materiales extras -->
 <!-- ------------------------- | -----------------------------|------------------------------- -->
